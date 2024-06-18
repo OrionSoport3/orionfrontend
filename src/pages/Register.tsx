@@ -5,7 +5,13 @@ import { SignBoton } from "../components/Subcomponents/SignBoton";
 import { TituloSection } from "../components/register/TituloSection";
 import { Api } from "../services/Api";
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
+import { Toaster, toast } from "sonner";
+
+
 const Register = () => {
+
+  const navigate = useNavigate();
 
   const validationSchema = Yup.object({
     name: Yup.string().min(3, "El nombre minimo debe contener al menos 3 letras").max(100).required("Por favor ingrese un nombre"),
@@ -26,11 +32,14 @@ const Register = () => {
     password_confirmation: '',
     token: '',
   };
+  
 
+  
   const onSubmit = (values: typeof valoresIniciales) => {
     console.log(values);
-    Api.post('auth/register',values).then(response => {
+    Api.post('auth/register',values, navigate).then(response => {
       console.log(response);
+      toast.success('Registro exitoso')
     })
   };
 
@@ -73,7 +82,8 @@ const Register = () => {
                   <InputLogin csslabel="w-full pl-1 text-white font-josefin text-base nose:text-base md:text-xl mt-0 py-0 pb-3 truncate" css="flex flex-col justify-center w-full items-cent pt-0 h-[150px]"
                   type="password" name="token" label ="token" placeholder="****" inside="Token de seguridad" error={errors.token} value={values.token} onChange={handleChange}/>
                 </div>
-              <SignBoton inside="Ingresar" type="submit" /> 
+              <SignBoton inside="Ingresar" type="submit" />
+              
             </form>
           )}
           </Formik>

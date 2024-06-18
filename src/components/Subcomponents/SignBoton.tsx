@@ -1,3 +1,5 @@
+import { toast } from "sonner"
+
 type Props = {
     id?: string,
     inside: string

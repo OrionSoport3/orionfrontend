@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
 
 export const Navbar: React.FC = ()  => {
 
@@ -37,7 +38,7 @@ export const Navbar: React.FC = ()  => {
           </div>
           <div className={`flex flex-col space-y-2 mt-3 md:flex-row BP1:justify-between md:w-7/12  transform transition-all duration-300 BP1:pl-5 ${openNavbar ? 'h-[200px] BP1:h-auto opacity-100' : 'h-[0px] opacity-0 pointer-events-none'}`}>
             <div className="font-josefin py-2 font-bold md:text-base text-base sm:text-xl  border-black hover:bg-slate-300"><a href="">Historial de servicios</a></div>
-            <div className="text-sm py-2 md:py-0 md:text-base border-t-1 border-black"><a href="">Compañías</a></div>
+            <div className="text-sm py-2 md:py-0 md:text-base border-t-1 border-black"><Link to={'/login'}>Empresas</Link></div>
             <div className="text-sm py-2 md:py-0 md:text-base border-t-1 border-black"><a href="">Servicios</a></div>
             <div className="text-sm py-2 md:py-0 md:text-base border-t-1 border-black"><a href="">Personal</a></div>
           </div>

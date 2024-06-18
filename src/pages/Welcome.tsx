@@ -20,11 +20,6 @@ const Welcome: React.FC = () => {
     };
 
     ajustarMenuSegunPantalla(); 
-    window.addEventListener('resize', ajustarMenuSegunPantalla); 
-
-    return () => {
-      window.removeEventListener('resize', ajustarMenuSegunPantalla);
-    };
   }, []);
 
   return (

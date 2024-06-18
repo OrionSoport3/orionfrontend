@@ -6,10 +6,10 @@ import BaseDashboard from "../pages/layouts/BaseDashboard";
 
 export const routes = [
     {
-        path: "/welcome",
+        path: "/",
         element: Welcome
     }, {
-        path: "/",
+        path: "/login",
         element: Login
     }, {
         path: "/register",
