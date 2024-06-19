@@ -6,7 +6,7 @@ import { TituloSection } from "../components/register/TituloSection";
 import { Api } from "../services/Api";
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 
 const Register = () => {
@@ -15,8 +15,10 @@ const Register = () => {
 
   const validationSchema = Yup.object({
     name: Yup.string().min(3, "El nombre minimo debe contener al menos 3 letras").max(100).required("Por favor ingrese un nombre"),
-    email: Yup.string().email("Por favor ingrese un correo valido").required(),
-    birthday: Yup.date().required(),
+    lastname: Yup.string().required('Ingrese sus apellidos'),
+    email: Yup.string().email("Por favor ingrese un correo valido").required('Por favor ingrese su correo'),
+    birthday: Yup.date().required('Ingrese su fecha de nacimiento'),
+    departamento: Yup.string().required('Este campo no puede quedar vacio'),
     password: Yup.string().min(8, "La contraseña debe contener al menos 8 caracteres").max(20,"Su contraseña debe estar entre 8 y 20 caracteres").required("Por favor ingrese una contraseña"),
     password_confirmation: Yup.string().oneOf([Yup.ref("password")], "Las contraseñas no coinciden").required("Confirme su contraseña"),
     token: Yup.string().ensure()
@@ -33,19 +35,23 @@ const Register = () => {
     token: '',
   };
   
-
-  
   const onSubmit = (values: typeof valoresIniciales) => {
     console.log(values);
-    Api.post('auth/register',values, navigate).then(response => {
-      console.log(response);
-      toast.success('Registro exitoso')
+    Api.post('auth/register',values).then(response => {
+      if (response.statusCode == 201){
+        
+        navigate('/login')
+        console.log(response)
+        toast.success('Registro exitoso')
+      } else {
+        toast.info('El token que ha ingresado no es correcto')
+      }
     })
   };
 
   return (
     <div className=" w-screen fixed h-screen">
-      <Navbar ruta="Iniciar sesion" lugar="/"/>
+      <Navbar ruta="Iniciar sesion" lugar="/login"/>
       <div className="flex bg-fondo-register bg-no-repeat bg-cover mt-14 bg-center flex-col min-h-screen  items-center w-screen h-screen overflow-y-auto">
           <Formik
             initialValues={valoresIniciales}
@@ -60,7 +66,7 @@ const Register = () => {
                 /* and other goodies */
               }) => (
 
-            <form onSubmit={handleSubmit} className="mt-14 mb-44 w-10/12 md:w-9/12 xl:w-1/2 h-auto bg-gradient-to-tr relative from-blue-600 to-blue-950  md:px-6 flex flex-col items-center rounded-3xl">
+            <form onSubmit={handleSubmit} className="mt-14 mb-44 w-10/12 md:w-9/12 xl:w-1/2 h-auto bg-gradient-to-tr relative from-blue-600 to-blue-950  md:px-6 flex flex-col items-center rounded-3xl ">
               <div className="bg-blue-100 bg-opacity-50 w-4/12 bottom-0 left-0 rounded-bl-[4000px] sm:rounded-bl-[2000px] md:rounded-bl-[2000px] rounded-t-full absolute h-1/4"></div>
               <div className="bg-blue-100 bg-opacity-40 w-2/6 bottom-0 rounded-t-full absolute rounded-b-2xl h-3/6"></div>
               <div className="bg-blue-100 bg-opacity-20 w-2/6 bottom-0 right-0 rounded-br-[4000px] sm:rounded-br-[2000px] md:rounded-br-[2000px] rounded-t-full absolute h-4/5"></div>
@@ -68,12 +74,12 @@ const Register = () => {
               <TituloSection contenido="DATOS PERSONALES" />
               <div className="flex-wrap med:flex-nowrap sm:flex sm:flex-row  md:text w-full pb-7">
                 <InputLogin type="text" name="name" label="name" placeholder="" inside="Ingrese sus nombres:" error={errors.name} onChange={handleChange} value={values.name}/>
-                <InputLogin type="text" name="lastname" label="lastname" inside="Ingrese sus apellidos:" onChange={handleChange}/>
-                <InputLogin type="date" name="birthday" label="birthday" inside="Fecha de nacimiento:" onChange={handleChange}/>
+                <InputLogin type="text" name="lastname" label="lastname" inside="Ingrese sus apellidos:" onChange={handleChange} error={errors.lastname}/>
+                <InputLogin type="date" name="birthday" label="birthday" inside="Fecha de nacimiento:" onChange={handleChange} error={errors.birthday}/>
               </div>
               <TituloSection contenido="DATOS DE USUARIO" />
               <div className=" sm:flex sm:flex-row md:text w-full">
-                <InputLogin type="text" name="departamento" label="departamento" placeholder="" inside="Departamento:"  onChange={handleChange}/>                
+                <InputLogin type="text" name="departamento" label="departamento" placeholder="" inside="Departamento:"  onChange={handleChange} error={errors.departamento}/>                
                 <InputLogin type="email" name="email" label="correo" inside="Escriba su correo:" onChange={handleChange} error={errors.email} value={values.email}/>
               </div>
                 <InputLogin type="password" name="password" label="password" placeholder="****************" inside="Ingrese su contraseña:" error={errors.password} onChange={handleChange} value={values.password}/>

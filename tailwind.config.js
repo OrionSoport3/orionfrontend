@@ -47,14 +47,19 @@ export default {
         'moradito': '#A7B0E3',
         'morado-señor': '#727FBF',
         'azul-de-mujer': '#050A25',
-        'azul-navbar': '#101830'
+        'azul-navbar': '#101830',
+        'azulaso': "#64889B",
+        'azulote': "#273B4E",
+        'azul-hombre': "#1A2533",
+        'azul-gris': "#B1C7CD",
       },
       backgroundImage: {
         'design-one' : "url('/Rectangle.png')",
         'check': "url('/check-regular-240.png')",
         'fondo-it': "url('/FONDO_IT.jpeg')",
         'logo-orion': "url('/logo-orion.jpg')",
-        'fondo-register': "url('/fondito.jpeg')"
+        'fondo-register': "url('/fondito.jpeg')",
+        'fondito': "url('/fondo_restablecer.jpeg')"
       },
       width: {
         'anchito': '26rem',

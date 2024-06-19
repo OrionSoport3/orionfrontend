@@ -22,7 +22,7 @@ export const InputLogin = ({label, name, id, placeholder, error, type, inside, o
         {inside}
       </label>
       <input value={value} onChange={onChange} type={type ?? 'text'} name={name} id={id} className="bg-white md:smartwatch:w-[200px] w-auto md:w-full rounded-full md:rounded-lg h-8 md:h-9 outline-none shadow-lg px-3" placeholder={placeholder}/>
-      {error && <small className="text-red-500">{error}</small>}
+      {error && <small className="text-red-500 text-base font-bold mt-2">{error}</small>}
     </div>
   )
 }
