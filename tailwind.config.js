@@ -42,6 +42,7 @@ export default {
         'colores-pantalla': {
           DEFAULT: '#F6F9FF',
           'info': '#D1D5E8',
+          'form': "#DFDFE6",
         },
         'blue-button': '#020066',
         'moradito': '#A7B0E3',
@@ -52,6 +53,11 @@ export default {
         'azulote': "#273B4E",
         'azul-hombre': "#1A2533",
         'azul-gris': "#B1C7CD",
+        'pricha' : "#8190E1",
+        'moradito': "#171E3F",
+        'azuleh':"#A7B0E3",
+        'morado-beli': "",
+        'Belize': "#CAD0EE",
       },
       backgroundImage: {
         'design-one' : "url('/Rectangle.png')",
@@ -59,7 +65,9 @@ export default {
         'fondo-it': "url('/FONDO_IT.jpeg')",
         'logo-orion': "url('/logo-orion.jpg')",
         'fondo-register': "url('/fondito.jpeg')",
-        'fondito': "url('/fondo_restablecer.jpeg')"
+        'fondito': "url('/fondo_restablecer.jpeg')",
+        'rectangulo-azul': "url('/Rectangle_melt.png')",
+        'logout-white': "url('/logout-white.png')"
       },
       width: {
         'anchito': '26rem',

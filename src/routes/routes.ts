@@ -1,5 +1,6 @@
 import Customers from "../pages/Customers";
 import Login from "../pages/Login";
+import { NewServiceForm } from "../pages/NewServiceForm";
 import Register from "../pages/Register";
 import { Restablish } from "../pages/Restablish";
 import Welcome from "../pages/Welcome";
@@ -9,7 +10,11 @@ export const routes = [
     {
         path: "/welcome",
         element: Welcome,
-        protected: true
+        protected: true,
+    },{
+        path: "/new_service",
+        element: NewServiceForm,
+        protected: true,
     }, {
         path: "/login",
         element: Login

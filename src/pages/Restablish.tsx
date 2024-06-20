@@ -34,8 +34,7 @@ export const Restablish = () => {
             console.log(response);
             toast.success('Registro exitoso');
         } else {
-          // Manejar errores de autenticación
-          console.error('Credenciales incorrectas');
+          toast.error('Token incorrecto');
         }
     };
 

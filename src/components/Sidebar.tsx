@@ -1,5 +1,6 @@
 import React from 'react';
 import { Checkbox } from "./Checkbox";
+import { SrBoton } from './Subcomponents/SrBoton';
 
 interface SidebarProps {
   menuAbierto: boolean;
