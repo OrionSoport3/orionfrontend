@@ -7,7 +7,7 @@ import { Api } from "../services/Api";
 import * as Yup from 'yup';
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { toast } from "sonner";
+import { Toaster, toast } from "sonner";
 import Dropdown from "../utils/Dropdown";
 
 const Register = () => {
@@ -17,7 +17,7 @@ const Register = () => {
 
   const handleSelect = (value: string, setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void) => {
     setSelectedOption(value);
-    setFieldValue("departamento", value);  // Actualizamos el valor del campo en Formik
+    setFieldValue("departamento", value);
   };
 
   const validationSchema = Yup.object({
@@ -44,11 +44,16 @@ const Register = () => {
 
   const onSubmit = (values: typeof valoresIniciales) => {
     Api.post('auth/register', values).then(response => {
-      if (response.statusCode === 201) {
-        navigate('/login');
-        toast.success('Registro exitoso');
-      } else {
-        toast.info('El token que ha ingresado no es correcto');
+      switch (response.statusCode) {
+        case 201: 
+          navigate('/login');
+          toast.success('El registro ha sido exitoso')
+          break
+        case 400:
+          toast.error('El token ingresado no es correcto')
+          break
+        default:
+          toast.info('Hubo un error al procesar la solicitud' + response.statusCode)
       }
     });
   };
@@ -56,6 +61,7 @@ const Register = () => {
   return (
     <div className="w-screen fixed h-screen">
       <Navbar ruta="Iniciar sesion" lugar="/login"/>
+      <Toaster position="bottom-right" richColors></Toaster>
       <div className="flex bg-fondo-register bg-no-repeat bg-cover mt-14 bg-center flex-col min-h-screen items-center w-screen h-screen overflow-y-auto">
         <Formik
           initialValues={valoresIniciales}
@@ -81,9 +87,13 @@ const Register = () => {
                 <InputLogin type="date" name="birthday" label="birthday" inside="Fecha de nacimiento:" onChange={handleChange} error={errors.birthday} value={values.birthday}/>
               </div>
               <TituloSection contenido="DATOS DE USUARIO" />
-              <div className="sm:flex sm:flex-row md:text w-full items-center">
-                <Dropdown options={["Soporte Técnico", "Administración"]} label="Elegir departamento" onSelect={(value) => handleSelect(value, setFieldValue)} />
-                <InputLogin type="email" name="email" label="correo" inside="Escriba su correo:" onChange={handleChange} error={errors.email} value={values.email}/>
+              <div className="sm:flex sm:flex-row md:text w-full items-end justify-center BP1:mt-0 mt-8">
+                <Dropdown options={["Soporte Técnico", "Administración"]} label="Elegir departamento" error={errors.departamento} errorStyle="BP1:visible hidden" onSelect={(value) => handleSelect(value, setFieldValue)} />
+                <InputLogin type="email" name="email" label="correo" inside="Escriba su correo:" error={errors.email} errorStyle="BP1:visible hidden" onChange={handleChange} value={values.email}/>
+              </div>
+              <div className="sm:flex sm:flex-row md:text w-full items-start justify- BP1:mt-0 mt-8 pl-2 BP1:visible hidden">
+                <small className="text-red-500 text-base font-bold mt-2 truncate w-full">{errors.departamento}</small>
+                <small className="text-red-500 text-base font-bold mt-2 truncate w-full pl-2">{errors.email}</small>
               </div>
               <InputLogin type="password" name="password" label="password" placeholder="****************" inside="Ingrese su contraseña:" error={errors.password} onChange={handleChange} value={values.password}/>
               <InputLogin type="password" name="password_confirmation" label="password_confirmation" placeholder="****************" inside="Confirme su contraseña:" error={errors.password_confirmation} onChange={handleChange} value={values.password_confirmation}/>

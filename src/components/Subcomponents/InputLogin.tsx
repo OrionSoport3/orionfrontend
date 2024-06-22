@@ -11,9 +11,10 @@ type Props = {
   value?: string | number;
   css?: string,
   csslabel?: string,
+  errorStyle?: string,
 }
 
-export const InputLogin = ({label, name, id, placeholder, error, type, inside, onChange, value, css, csslabel}: Props) => {
+export const InputLogin = ({label, name, id, placeholder, error, type, inside, onChange, value, css, csslabel, errorStyle}: Props) => {
 
   return (
     <div className={` ${css ?? 'w-full  flex flex-col px-5 md:px-2 relative pt-2 md:mt-2'}`}>
@@ -22,7 +23,7 @@ export const InputLogin = ({label, name, id, placeholder, error, type, inside, o
         {inside}
       </label>
       <input value={value} onChange={onChange} type={type ?? 'text'} name={name} id={id} className="bg-white md:smartwatch:w-[200px] w-auto md:w-full rounded-full md:rounded-lg h-8 md:h-9 outline-none shadow-lg px-3" placeholder={placeholder}/>
-      {error && <small className="text-red-500 text-base font-bold mt-2">{error}</small>}
+      {error && <small className={`text-red-500 text-base font-bold mt-2 ${errorStyle && 'BP1:hidden visible'}`}>{error}</small>}
     </div>
   )
 }

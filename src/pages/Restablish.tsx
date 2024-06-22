@@ -4,7 +4,7 @@ import { InputLogin } from "../components/Subcomponents/InputLogin";
 import * as Yup from 'yup';
 import { Api } from "../services/Api";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { Toaster, toast } from "sonner";
 import { SignBoton } from "../components/Subcomponents/SignBoton";
 
 
@@ -40,6 +40,7 @@ export const Restablish = () => {
 
   return (
     <div className="w-screen fixed h-screen">
+      <Toaster/>
         <Navbar ruta="Iniciar sesion" lugar="/login" isRestablish={true} segundoLugar="/register" segundaRuta="Registrarse" color="bg-azul-hombre"/>
         <div className="flex bg-fondito bg-no-repeat bg-cover mt-14 bg-center flex-col min-h-screen  items-center w-screen h-screen overflow-y-auto">
             <Formik

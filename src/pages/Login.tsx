@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
     const validationSchema = Yup.object({
       email: Yup.string().email("Por favor ingrese un correo valido").required('Por favor ingrese su correo'),
@@ -27,14 +27,21 @@ const Login = () => {
 
     const onSubmit = async (values: typeof initialValues) => {
       const response = await Api.getUser('auth/login', values);
-  
-      if (response.statusCode === 200) {
-        localStorage.setItem('token', response.data.token)
-        dispatch(login({ token: response.data.token, user: true }));
-        navigate('/welcome');
-      } else {
-        // Manejar errores de autenticación
-        toast.error('Las credenciales no son correctas')
+
+      switch (response.statusCode) {
+        case 200: 
+          localStorage.setItem('token', response.data.token);
+          dispatch(login({ token: response.data.token, user: true }));
+          navigate('/welcome');
+          break
+        case 401:
+          toast.error('No existe un usuario con los datos proporcionados');
+          break
+        case 422:
+          toast.error('El usuario y/o contraseña no son correctos');
+          break
+        default:
+          toast.info(response.statusCode)
       }
     };
 

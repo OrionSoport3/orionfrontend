@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 interface DropdownProps {
   options: string[];
   label: string;
+  error?: string,
   onSelect: (value: string) => void;
+  errorStyle?: string,
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ options, label, onSelect }) => {
+const Dropdown: React.FC<DropdownProps> = ({ options, label, onSelect, error, errorStyle }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
@@ -15,16 +17,16 @@ const Dropdown: React.FC<DropdownProps> = ({ options, label, onSelect }) => {
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
     setIsOpen(false);
-    onSelect(option); // Llamamos a onSelect con la opción seleccionada
+    onSelect(option);
   };
 
   return (
-    <div className="relative w-full inline-block text-left px-4 BP1:px-2 pt-7 space-y-3 md:mt-2">
-        <label className='w-full text-white font-josefin text-xl nose:text-base md:text-xl md:py-3 pl-2 nose:mt-0 mt-2 truncate' htmlFor='Departamento'>Escoja un departamento</label>
+    <div className="relative flex flex-col w-full text-left px-4 BP1:px-2 space-y-2.5 ">
+        <label className='w-full text-white font-josefin text-xl nose:text-base md:text-xl pl-2 nose:mt-0 truncate' htmlFor='Departamento'>Escoja un departamento</label>
       <div>
         <button
           type="button"
-          className="inline-flex justify-between w-full rounded-3xl BP1:rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 "
+          className="w-full inline-flex justify-between items-center bg-white text-gray-500 md:smartwatch:w-[200px] md:w-full rounded-full md:rounded-lg h-8 md:h-9 outline-none shadow-lg px-3"
           id="options-menu"
           aria-expanded="true"
           aria-haspopup="true"
@@ -49,17 +51,17 @@ const Dropdown: React.FC<DropdownProps> = ({ options, label, onSelect }) => {
 
       {isOpen ? 
       <div
-          className=" origin-center absolute items-center z-50 h-auto mt-2 w-[89%] px-3 BP1:px-2 rounded-2xl BP1:rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+          className={`origin-center absolute items-center z-50 h-auto mt-2 w-full ${error ? '-bottom-12' : '-bottom-20'}`}
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="options-menu"
         >
-          <div className="py-1">
+          <div className="py-1 bg-white rounded-2xl BP1:rounded-md shadow-lg  ring-1 mr-8 BP1:mr-4">
             {options.map((option, index) => (
               <button
                 key={index}
                 onClick={() => handleOptionClick(option)}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
                 role="menuitem"
               >
                 {option}
@@ -76,7 +78,9 @@ const Dropdown: React.FC<DropdownProps> = ({ options, label, onSelect }) => {
         >
         </div>
         }
-    </div>
+      {error && <small className={`text-red-500 text-base font-bold mt-2 ${errorStyle && 'BP1:hidden visible'}`}>{error}</small>}
+      </div>
+
   );
 };
 
