@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 interface DropdownProps {
   options: string[];
-  label: string;
+  label?: string;
   error?: string,
   onSelect: (value: string) => void;
   errorStyle?: string,

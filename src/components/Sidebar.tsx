@@ -9,12 +9,12 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ menuAbierto, toggleMenu }) => {
   return (
-    <div className={`transform transition-all duration-500 mt-3 BP1:mt-0 ${menuAbierto ? 'w-[17rem] md:w-[22rem] abs' : 'w-10 h-10 BP1:h-20 opacity-100'}`}>
+    <div className={`transform transition-all duration-500 flex flex-col BP1:mt-3 ${menuAbierto ? 'w-[17rem] md:w-[22rem]' : 'w-6 sm:w-9 BP1:w-10 h-3 BP1:h-20 opacity-100 mt-1'}`}>
       <div className="flex justify-between items-center">
         <h1 className={`flex-grow text-black font-bold text-xl sm:text-2xl BP1:text-3xl border-b-2 border-black pb-3 font-marcellus transform transition-transform duration-500
-          ${menuAbierto ? 'opacity-100' : 'w-[0px] opacity-0'}`}>FILTRAR</h1>
+          ${menuAbierto ? 'opacity-100' : 'w-[0px] opacity-0 hidden'}`}>FILTRAR</h1>
         <button className="list_arrow ml-auto outline-none" onClick={toggleMenu}>
-          <img src="/chevrons-right-solid-240.png" className={`h-6 sm:h-8 -mt-3 md:m-0 md:h-10 transform transition-transform duration-200 ${menuAbierto ? 'rotate-90' : 'rotate-0'}`} />
+          <img src="/chevrons-right-solid-240.png" className={`h-6 sm:h-8 md:m-0 md:h-10 transform transition-transform duration-200 ${menuAbierto ? 'rotate-90' : 'rotate-0'}`} />
         </button>
       </div>
       <div className={`pt-2 md:pt-6 transform transition-all duration-200 ${menuAbierto ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>

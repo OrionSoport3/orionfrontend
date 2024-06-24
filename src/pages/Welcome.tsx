@@ -24,15 +24,15 @@ const Welcome: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed w-screen h-screen bg-design-one bg-no-repeat bg-contain bg-fixed text-black bg-colores-pantalla">
+    <div className="fixed w-screen h-screen px-4 BP1:px-6 bg-design-one bg-no-repeat bg-contain bg-fixed text-black bg-colores-pantalla">
       <div className='flex justify-center'>
         <Navbar/>
       </div>
-      <div className={`flex h-[96%] BP1:pt-5 md:pl-9 ${menuAbierto ? 'pl-5' : 'pl-0'}`}>
+      <div className={`flex h-[96%] BP1:pt-5 pt-1 ${menuAbierto ? '' : 'pl-0'}`}>
         <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} />
-        <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 px-4 ${menuAbierto ? ' w-[0] md:w-11/12 opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
+        <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 ${menuAbierto ? ' w-[0] md:w-11/12 opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
           <Subnavbar />
-          <div className='absolute bottom-28 right-5 BP1:bottom-20 BP1:right-8 '>
+          <div className='absolute bottom-28 right-0 BP1:bottom-20 BP1:right-8 '>
             <SrBoton ruta='/new_service' contenido='NUEVO SERVICIO'/>
           </div>
         </div>
