@@ -88,7 +88,7 @@ const Register = () => {
               </div>
               <TituloSection contenido="DATOS DE USUARIO" />
               <div className="sm:flex sm:flex-row md:text w-full items-end justify-center BP1:mt-0 mt-8">
-                <Dropdown options={["Soporte Técnico", "Administración"]} label="Elegir departamento" error={errors.departamento} errorStyle="BP1:visible hidden" onSelect={(value) => handleSelect(value, setFieldValue)} />
+                <Dropdown options={["CONTADOR", "INGENIERO", "AUXILIAR SOPORTE", "VENTAS", "MAESTRO ALBAÑIL", "TORRERO", ]} label="Elegir departamento" error={errors.departamento} errorStyle="BP1:visible hidden" onSelect={(value) => handleSelect(value, setFieldValue)} />
                 <InputLogin type="email" name="email" label="correo" inside="Escriba su correo:" error={errors.email} errorStyle="BP1:visible hidden" onChange={handleChange} value={values.email}/>
               </div>
               <div className="sm:flex sm:flex-row md:text w-full items-start justify- BP1:mt-0 mt-8 pl-2 BP1:visible hidden">

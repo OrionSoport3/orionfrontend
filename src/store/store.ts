@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from '../store';
+import isSelectedReducer from './form'
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    select: isSelectedReducer
   },
 });
 

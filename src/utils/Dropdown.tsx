@@ -21,7 +21,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, label, onSelect, error, er
   };
 
   return (
-    <div className="relative flex flex-col w-full text-left px-4 BP1:px-2 space-y-2.5 ">
+    <div className="relative w-full px-2">
         <label className='w-full text-white font-josefin text-xl nose:text-base md:text-xl pl-2 nose:mt-0 truncate' htmlFor='Departamento'>Escoja un departamento</label>
       <div>
         <button
@@ -51,12 +51,12 @@ const Dropdown: React.FC<DropdownProps> = ({ options, label, onSelect, error, er
 
       {isOpen ? 
       <div
-          className={`origin-center absolute items-center z-50 h-auto mt-2 w-full ${error ? '-bottom-12' : '-bottom-20'}`}
+          className={`origin-center absolute items-center z-50 rounded-lg h-[120px] overflow-y-auto mt-2 w-full`}
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="options-menu"
         >
-          <div className="py-1 bg-white rounded-2xl BP1:rounded-md shadow-lg  ring-1 mr-8 BP1:mr-4">
+          <div className="py-1 bg-white shadow-lg ">
             {options.map((option, index) => (
               <button
                 key={index}

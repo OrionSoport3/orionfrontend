@@ -62,8 +62,10 @@ export const InputNew = ({
     };
 
     return (
-        <div className={`flex flex-row py-2 w-full px-2 ${center ?? 'items-center'}`}>
-            <label htmlFor="text" className="font-josefin text-xl text-black w-2/5">
+        <div className={`flex flex-col
+         py-2 w-full px-2 ${center ?? 'items-center'}`}>
+            <div className="flex flex-row w-full">
+            <label htmlFor="text" className=" text-xl text-black w-2/5">
                 {texto}:
             </label>
             {incheck ? (
@@ -125,7 +127,10 @@ export const InputNew = ({
                 style={{ lineHeight: '1.5' }}
               />
             )}
+            </div>
+            <div className="flex flex-row w-full items-center">
             {error && <small className={`text-red-500 text-base font-bold mt-2 ${errorStyle && 'BP1:hidden visible'}`}>{error}</small>}
+            </div>
         </div>
     );
 };

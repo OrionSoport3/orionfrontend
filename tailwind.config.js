@@ -58,6 +58,7 @@ export default {
         'azuleh':"#A7B0E3",
         'morado-beli': "",
         'Belize': "#CAD0EE",
+        'gris': "#3D445A",
       },
       backgroundImage: {
         'design-one' : "url('/Rectangle.png')",
