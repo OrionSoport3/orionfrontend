@@ -26,7 +26,7 @@ const Login = () => {
     }
 
     const onSubmit = async (values: typeof initialValues) => {
-      const response = await Api.getUser('auth/login', values);
+      const response = await Api.post('auth/login', values);
 
       switch (response.statusCode) {
         case 200: 

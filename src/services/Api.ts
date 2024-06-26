@@ -18,13 +18,13 @@ export class Api {
         };
     }
 
-    static async getUser<T>(url: string, data: any): Promise<any> {
+    static async getUser<T>(url: string): Promise<any> {
         const response = await fetch(`${Api.baseUrl}${url}`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('token')}`
             },
-            body: JSON.stringify(data)
         });
 
         const dataResponse = await response.json();

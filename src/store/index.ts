@@ -6,8 +6,8 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-    token: localStorage.getItem('token'),
-    user: !!localStorage.getItem('token'),
+    token: null,
+    user: false,
 };
 
 const authSlice = createSlice({
@@ -21,7 +21,6 @@ const authSlice = createSlice({
         logout: (state) => {
             state.token = null;
             state.user = false;
-            localStorage.removeItem('token');
         }
     }
 });

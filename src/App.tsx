@@ -1,9 +1,10 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { store } from './store/store';
+import { persistor, store } from './store/store';
 import { routes } from './routes/routes';
 import ProtectedRoute from './components/ProtectedRoute';
+import { PersistGate } from 'redux-persist/integration/react';
 
 function App() {
   const router = createBrowserRouter(routes.map(route => ({
@@ -21,7 +22,9 @@ function App() {
 
   return (
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <PersistGate loading={null} persistor={persistor}>
+        <RouterProvider router={router} />
+      </PersistGate>
     </Provider>
   );
 }
