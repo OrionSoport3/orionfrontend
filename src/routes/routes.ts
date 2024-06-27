@@ -11,29 +11,37 @@ export const routes = [
         path: "/welcome",
         element: Welcome,
         protected: true,
-    },{
+    },
+    {
         path: "/new_service",
         element: NewServiceForm,
         protected: true,
-    }, {
+    },
+    {
         path: "/login",
-        element: Login
-    }, {
+        element: Login,
+        public: true
+    },
+    {
         path: "/restablecer_contraseña",
-        element: Restablish
-    }, {
+        element: Restablish,
+        public: true
+    },
+    {
         path: "/register",
-        element: Register
-    }, {
-        path: "dashboard",
+        element: Register,
+        public: true
+    },
+    {
+        path: "/dashboard",
         element: BaseDashboard,
         protected: true,
         children: [
             {
                 path: "",
                 element: Customers,
-                protected: true
-            }
-        ]
-    }
-]
+                protected: true,
+            },
+        ],
+    },
+];

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch } from '../store/store';
 import { logout } from '../store';
-import { useDispatch } from 'react-redux';
 
 type Properties = {
   estilo?: string,
@@ -11,7 +11,7 @@ type Properties = {
 export const Navbar = ({estilo, isForm}: Properties)  => {
 
   const [openNavbar, setOpenr] = useState(true);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const toggleNavbar = () => {

@@ -4,13 +4,12 @@ import { InputNew } from "../utils/InputNew";
 import { NewTitulo } from "../components/form/NewTitulo";
 import { Formik } from "formik";
 import * as Yup from 'yup';
-import { Api } from "../services/Api";
 import { ItemSeleccionable } from "../utils/ItemSeleccionable";
 import { useDispatch, useSelector } from 'react-redux';
 import { SignBoton } from "../components/Subcomponents/SignBoton";
 import { Toaster, toast } from "sonner";
-import { AppDispatch } from "../store/store";
-import { fetchUsers } from "../store/form";
+import { useAppDispatch } from "../store/store";
+import { Api } from "../services/Api";
 
 
 
@@ -25,6 +24,20 @@ export const NewServiceForm = () => {
     setSelectedOption(value);
     setFieldValue(field,value);
   };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await Api.getUser('get');
+      const usuarios = response.data.user.map((user: any) => ({
+          name: user.name,
+          departamento: user.departamento,
+      }));
+      return usuarios;
+  } catch (error) {
+      console.error('Error fetching users:', error);
+      throw new Error('Failed to fetch users');
+  }
+  }
 
 
   const validationSchema = Yup.object({
@@ -81,7 +94,7 @@ export const NewServiceForm = () => {
                     <h2 className="font-semibold w-1/5 my-5">Personal: </h2>
                     <div className="flex flex-wrap space-x-3 w-full">
                       {selectedItems.map((item: any) => (
-                        <ItemSeleccionable key={item.name} name={item.name} />
+                        <ItemSeleccionable key={item.name} name={item.name}  />
                       ))}
                     </div>
                   </div>

@@ -1,23 +1,13 @@
-import { useState } from "react"
-import { useDispatch, useSelector } from 'react-redux';
-import { select } from "../store/form";
-
 type Props = {
     name: string,
+    isSelected: boolean;
+    selected: () => void,
+
 }
 
-export const ItemSeleccionable = ({name}: Props) => {
-    
-    const dispatch = useDispatch();
-    const isSelected = useSelector((state: any) =>
-      state.select.items.find((item: any) => item.name === name)?.isSelected
-    );
-  
-    const selected = () => {
-      dispatch(select(name));
-    };
-    
-    
+export const ItemSeleccionable = ({name, isSelected, selected}: Props) => {
+
+        
     return (
     
     <button className={`w-auto h-8 rounded-full  shadow-lg flex flex-row items-center px-4 outline-none my-1 ${isSelected ? 'bg-gris text-white' : 'hover:bg-gray-200 transition-all duration-150 bg-white'} `} onClick={selected}>

@@ -1,57 +1,30 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { Api } from '../services/Api';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Item {
-    name: string;
-    isSelected: boolean;
+interface SelectedUsersState {
+    selectedUsers: string[];
 }
 
-interface IsSelectedState {
-    items: Item[];
-    status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
-}
-
-const initialState: IsSelectedState = {
-    items: [],
-    status: 'idle',
-    error: null,
+const initialState: SelectedUsersState = {
+    selectedUsers: [],
 };
 
-export const fetchUsers = createAsyncThunk('select/fetchUsers', async () => {
-    const response = await Api.getUser('get');
-    return response.data.user.map((user: any) => ({
-        name: user.name,
-        isSelected: false,
-    }));
-});
-
-const IsSelectedSlice = createSlice({
-    name: 'select',
+const selectedUsersSlice = createSlice({
+    name: 'selectedUsers',
     initialState,
     reducers: {
-        select: (state, action: PayloadAction<string>) => {
-            const item = state.items.find(item => item.name === action.payload);
-            if (item) {
-                item.isSelected = !item.isSelected;
+        addSelectedUser: (state, action: PayloadAction<string>) => {
+            if (!state.selectedUsers.includes(action.payload)) {
+                state.selectedUsers.push(action.payload);
             }
         },
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchUsers.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(fetchUsers.fulfilled, (state, action: PayloadAction<Item[]>) => {
-                state.status = 'succeeded';
-                state.items = action.payload;
-            })
-            .addCase(fetchUsers.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.error.message || 'Failed to fetch users';
-            });
+        removeSelectedUser: (state, action: PayloadAction<string>) => {
+            state.selectedUsers = state.selectedUsers.filter(user => user !== action.payload);
+        },
+        clearSelectedUsers: (state) => {
+            state.selectedUsers = [];
+        },
     },
 });
 
-export const { select } = IsSelectedSlice.actions;
-export default IsSelectedSlice.reducer;
+export const { addSelectedUser, removeSelectedUser, clearSelectedUsers } = selectedUsersSlice.actions;
+export default selectedUsersSlice.reducer;

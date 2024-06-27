@@ -3,26 +3,31 @@ import { Provider } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { persistor, store } from './store/store';
 import { routes } from './routes/routes';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/filters/ProtectedRoute';
+import PublicRoute from './components/filters/PublicRoutes';
 import { PersistGate } from 'redux-persist/integration/react';
 
 function App() {
-  const router = createBrowserRouter(routes.map(route => ({
-    ...route,
-    element: route.protected
-      ? <ProtectedRoute element={React.createElement(route.element)} />
-      : React.createElement(route.element),
-    children: route.children?.map(child => ({
-      ...child,
-      element: child.protected
-        ? <ProtectedRoute element={React.createElement(child.element)} />
-        : React.createElement(child.element),
-    })),
-  })));
+  const router = createBrowserRouter(
+    routes.map(route => ({
+      path: route.path,
+      element: route.protected
+        ? <ProtectedRoute element={React.createElement(route.element)}/>
+        : route.public
+          ? <PublicRoute element={React.createElement(route.element)}/>
+          : React.createElement(route.element),
+      children: route.children?.map(child => ({
+        path: child.path,
+        element: child.protected
+          ? <ProtectedRoute element={React.createElement(child.element)}/>
+          : React.createElement(child.element),
+      })),
+    }))
+  );
 
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate persistor={persistor}>
         <RouterProvider router={router} />
       </PersistGate>
     </Provider>

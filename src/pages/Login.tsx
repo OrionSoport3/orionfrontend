@@ -3,17 +3,15 @@ import { Navbar } from "../components/loginComponents/Navbar";
 import { InputLogin } from "../components/Subcomponents/InputLogin";
 import { SignBoton } from "../components/Subcomponents/SignBoton";
 import { Toaster, toast } from "sonner";
-import { Link } from "react-router-dom";
-import { Api } from "../services/Api";
-import { useNavigate } from 'react-router-dom';
-import { login } from "../store";
-import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
+import { useAppDispatch } from "../store/store";
+import { loginUser } from "../store";
 
 
 const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const validationSchema = Yup.object({
       email: Yup.string().email("Por favor ingrese un correo valido").required('Por favor ingrese su correo'),
@@ -26,22 +24,12 @@ const Login = () => {
     }
 
     const onSubmit = async (values: typeof initialValues) => {
-      const response = await Api.post('auth/login', values);
-
-      switch (response.statusCode) {
-        case 200: 
-          localStorage.setItem('token', response.data.token);
-          dispatch(login({ token: response.data.token, user: true }));
-          navigate('/welcome');
-          break
-        case 401:
-          toast.error('No existe un usuario con los datos proporcionados');
-          break
-        case 422:
-          toast.error('El usuario y/o contraseña no son correctos');
-          break
-        default:
-          toast.info(response.statusCode)
+      try {
+        await dispatch(loginUser(values)).unwrap();
+        navigate('/welcome');
+        toast.success('Login successful!');
+      } catch (error) {
+        console.log(error);
       }
     };
 
