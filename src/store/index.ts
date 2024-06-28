@@ -30,16 +30,17 @@ export const loginUser = createAsyncThunk('/auth/loginUsers', async (data: any, 
             case 200: 
                 return response.data;
             case 401:
-                toast.error('No existe un usuario con los datos proporcionados');
-                return rejectWithValue({ message: 'Unauthorized' });
+                toast.error('El usuario y/o contraseña son incorrectos');
+                return rejectWithValue({ message: 'Invalid Credentials' });
             case 422:
-                toast.error('El usuario y/o contraseña no son correctos');
-                return rejectWithValue({ message: 'Invalid credentials' });
+                toast.error('No existe usuario con los datos proporcionados');
+                return rejectWithValue({ message: 'Unauthorized' });
             default:
                 throw new Error("Error");
         }
     } catch (error) {
         console.error('Error occurred during login:', error);
+        toast.error('Hubo un error al iniciar sesion: ' + error);
         throw error;
     }
 });

@@ -1,13 +1,12 @@
+
 type Props = {
     name: string,
-    isSelected: boolean;
+    isSelected: boolean
     selected: () => void,
-
 }
 
 export const ItemSeleccionable = ({name, isSelected, selected}: Props) => {
 
-        
     return (
     
     <button className={`w-auto h-8 rounded-full  shadow-lg flex flex-row items-center px-4 outline-none my-1 ${isSelected ? 'bg-gris text-white' : 'hover:bg-gray-200 transition-all duration-150 bg-white'} `} onClick={selected}>

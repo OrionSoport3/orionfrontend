@@ -27,7 +27,6 @@ const Login = () => {
       try {
         await dispatch(loginUser(values)).unwrap();
         navigate('/welcome');
-        toast.success('Login successful!');
       } catch (error) {
         console.log(error);
       }

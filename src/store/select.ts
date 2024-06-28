@@ -1,34 +1,29 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface Item {
-    name: string;
-    isSelected: boolean;
+  id: number;
+  name: string;
+  departamento: string;
+  isSelected: boolean;
 }
 
 interface SelectionState {
-    items: Item[];
+  items: Item[];
 }
 
 const initialState: SelectionState = {
-    items: [],
+  items: [],
 };
 
 const selectionSlice = createSlice({
-    name: 'select',
-    initialState,
-    reducers: {
-        select: (state, action: PayloadAction<string>) => {
-            const item = state.items.find(item => item.name === action.payload);
-            if (item) {
-                item.isSelected = !item.isSelected;
-
-                if (item.isSelected) {
-                } else {
-                }
-            }
-        },
+  name: 'select',
+  initialState,
+  reducers: {
+    setItems: (state, action: PayloadAction<Item[]>) => {
+      state.items = action.payload;
     },
+  },
 });
 
-export const { select } = selectionSlice.actions;
+export const { setItems } = selectionSlice.actions;
 export default selectionSlice.reducer;
