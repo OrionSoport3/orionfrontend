@@ -10,7 +10,7 @@ interface PublicRouteProps {
 const PublicRoute: React.FC<PublicRouteProps> = ({ element }) => {
   const isLogged = useSelector((state: RootState) => state.auth.isLogged);
 
-  if (isLogged) {
+  if (isLogged ) {
     return <Navigate to="/welcome" />;
   }
 

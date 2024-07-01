@@ -5,9 +5,10 @@ import { RootState } from '../../store/store';
 
 interface ProtectedRouteProps {
   element: JSX.Element;
+  path: string
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, path }) => {
   const isLogged = useSelector((state: RootState) => state.auth.isLogged);
 
   if (!isLogged) {
