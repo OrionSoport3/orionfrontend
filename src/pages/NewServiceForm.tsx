@@ -13,15 +13,15 @@ import { Api } from "../services/Api";
 import { setItems } from "../store/select";
 import { selected, unselect } from "../store/empresas";
 
-
-
 export const NewServiceForm = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   // Almacenar informacion de las llamadas de la Api
   const [users, setUsers] = useState<any[]>([]);
   const [companis, setEmpresas] = useState<any[]>([]);
+  const [sucursaless, setSucursales] = useState<any[]>([]);
   const [selectionCompani, setSelected] = useState<any[]>([]); 
+  const [sucusal_compani, setSucursalCompani] = useState<any[]>([]); 
 
 
   //Traer datos del store
@@ -34,14 +34,26 @@ export const NewServiceForm = () => {
 
   // buscar propiedades
   const nombresCompanis = companis.map(empresarios_modestos => empresarios_modestos.nombre_empresa);
-  const nombresSucursales = companis.map(compañias => compañias.sucursales.map((sucursalites: any) => sucursalites));
   const selectedItems = users.filter(user => user.isSelected);
   const unselectedItems = users.filter(user => !user.isSelected);
+  
 
   const manejarSelect = (field: string, value: string, setFieldValue: (field: any, value: string, shouldValidate?: boolean | undefined) => void) => {
-    setSelectedOption(value);
-    
-    setFieldValue(field,value);
+    dispatch(unselect());
+    if (field === "empresa") {
+      const CompaniSelected = companis.find(empresas => empresas.nombre_empresa === value);
+      setSelected(CompaniSelected);
+      const nombresSucursales = companis.find(empresas => empresas.nombre_empresa === value)?.sucursales.map((sucursales: any) => sucursales.nombre_sucursal);
+      setSucursales(nombresSucursales);
+      setFieldValue(field, value)
+    }
+    if (field === 'sucursal') {
+      const company_sucursal = selectionCompani.sucursales.find((sucursal: any) => sucursal.nombre_sucursal === value);
+      const company = {...selectionCompani, sucursales: company_sucursal};
+      setSucursalCompani(company);
+      dispatch(selected(sucusal_compani));
+      console.log(company);
+    }
   };
 
   const selection = (id: number) => {
@@ -49,13 +61,6 @@ export const NewServiceForm = () => {
     dispatch(setItems(updatedUsers));
     setUsers(updatedUsers);
   }
-
-  const selectedEmpresa = ((id_empresa: number, id_sucursal: number) => {
-    dispatch(unselect());
-    const selected_empresa = companis.find((empresa:any) => empresa.id_empresa === id_empresa ? {...empresa, isSelected_empresa: !empresa.isSelected_empresa} : empresa);
-    const sucursalEmpresa = selected_empresa.sucursales.map((sucursal: any) => sucursal.id_sucursal === id_sucursal ? {...sucursal, is_Selected_sucursal: !sucursal.isSelected_empresa } : sucursal);
-    setSelected(sucursalEmpresa);
-  })
 
   const fetchCompanis = async () => {
     if (!token) {
@@ -67,17 +72,14 @@ export const NewServiceForm = () => {
       const empresas = response.data.empresas_sucursales.map((empresas: any) => ({
           id_empresa: empresas.id_empresa,
           nombre_empresa: empresas.nombre_empresa,
-          isSelected_compani: empresaState.find(empresa => empresa.id_empresa === empresas.id_empresa)?.isSelected_empresa || false,
           sucursales: empresas.sucursales.map((sucursales: any) => ({
             id_sucursal: sucursales.id_sucursales,
             nombre_sucursal: sucursales.nombre,
             direccion_sucursal: sucursales.direccion,
             enlace_sucursal: sucursales.enlace,
             telefono_sucursal: sucursales.telefono,
-            isSelected_sucursal: empresaState.find(empresitas => empresitas.id_empresa === empresas.id_empresa)?.sucursales.find(sucursalitas => sucursalitas.id_sucursal === sucursales.id_sucursal)?.isSelected_sucursal || false,
           })),
       }));
-      console.log(empresas)
       setEmpresas(empresas);
     } catch (error) {
       console.error('Error fetching companies:', error);
@@ -151,7 +153,7 @@ export const NewServiceForm = () => {
                 <InputNew value={values.nombre_proyecto} onChange={handleChange} error={errors.nombre_proyecto} texto="Titulo del proyecto" name="nombre_proyecto" type="text" incheck={false} />
                 <div className="flex flex-row w-full h-auto">
                 <InputNew value={values.empresa} onChange={handleChange} error={errors.empresa} name="empresa" type="text" texto="Empresa" incheck options={nombresCompanis} label="Seleccione una empresa" onSelect={(value) => manejarSelect("empresa" ,value, setFieldValue)}/>
-                <InputNew value={values.sucursal} onChange={handleChange} error={errors.sucursal} name="sucursal" type="text" texto="Sucursal" incheck options={["Empresa 1", "Empresa 2", "Empresa 3", "Empresa 4"]} label="Seleccione una sucursal" onSelect={(value) => manejarSelect('sucursal', value,setFieldValue)}/>
+                <InputNew value={values.sucursal} onChange={handleChange} error={errors.sucursal} name="sucursal" type="text" texto="Sucursal" incheck options={sucursaless} label="Seleccione una sucursal" onSelect={(value) => manejarSelect('sucursal', value,setFieldValue)}/>
                 </div>
                 <InputNew value={values.resume} onChange={handleChange} error={errors.resume} texto="Resumen del proyecto" name="resume" type="text" incheck={false} css="h-24" center="items-start"/>
                 <NewTitulo texto="PERSONAL ENCARGADO"/>
