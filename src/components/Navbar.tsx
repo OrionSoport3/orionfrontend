@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { useAppDispatch } from '../store/store';
+import { useAppDispatch, RootState } from '../store/store';
 import { logout } from '../store';
+import { unselect } from '../store/empresas';
+import { clearSelectedUsers } from '../store/form';
+import { Api } from '../services/Api';
+import { useSelector } from 'react-redux';
 
 type Properties = {
   estilo?: string,
@@ -14,13 +18,28 @@ export const Navbar = ({estilo, isForm}: Properties)  => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const token = useSelector((state: RootState) => state.auth.token)
+
   const toggleNavbar = () => {
     setOpenr(!openNavbar);
   };
 
-  const cerrar_sesion = () => {
-    dispatch(logout());
-    navigate('/login');
+  const cerrar_sesion = async () => {
+    if (!token) {
+      console.error('El token no es válido');
+      return
+    }
+    try {
+      const response = await Api.withToken('logout',token);     
+      if (response.statusCode === 200) {
+        dispatch(unselect());
+        dispatch(clearSelectedUsers());
+        dispatch(logout());
+        navigate('/login');
+      }
+    } catch (error) {
+      console.log(['Error al cerrar sesion', error]);
+    }
   }
 
   useEffect(() => {

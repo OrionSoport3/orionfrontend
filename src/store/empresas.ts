@@ -11,7 +11,7 @@ interface Sucursales {
 interface Empresas {
     id_empresa: number | string | null,
     nombre_empresa: string,
-    sucursales: Sucursales,
+    sucursales: Sucursales[],
 }
 
 interface State {
@@ -22,13 +22,7 @@ const initialState: State = {
     empresas: {
         id_empresa: null,
         nombre_empresa: '',
-        sucursales: {
-            direccion_sucursal: '',
-            enlace_sucursal: '',
-            id_sucursal: null,
-            nombre_sucursal: '',
-            telefono_sucursal: '',
-        }
+        sucursales: [],
     }
 
 }
@@ -45,13 +39,7 @@ const selectionEmpresa = createSlice({
             state.empresas = {
                 id_empresa: null,
                 nombre_empresa: '',
-                sucursales: {
-                    id_sucursal: null,
-                    nombre_sucursal: '',
-                    direccion_sucursal: '',
-                    enlace_sucursal: '',
-                    telefono_sucursal: '',
-                },
+                sucursales: []
             }
         }
     }
