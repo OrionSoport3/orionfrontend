@@ -127,6 +127,8 @@ export const NewServiceForm = () => {
     fecha_final: Yup.date().required(),
   })
 
+  const personal = selectedItems.map((item: {name: string}) => item.name);
+
   const valoresIniciales = {
     nombre_proyecto: '',
     empresa: '',
@@ -137,6 +139,14 @@ export const NewServiceForm = () => {
   }
 
   const onSubmit = async (values: typeof valoresIniciales) => {
+   const mensaje = {
+    ...values,
+    personal: personal,
+   }
+
+   const response  = await Api.postActivitie('activities', mensaje, token);
+
+   console.log(response);
 
   }
 
@@ -144,7 +154,7 @@ export const NewServiceForm = () => {
     <div className="w-screen h-screen overflow-hidden fixed text-black flex flex-col items-center bg-gradient-to-t from-gray-300 to-colores-pantalla-form px-7">
       <Navbar/>
       <Toaster/>
-      <div className="flex w-full h-full">
+      <div className="flex flex-col w-full h-full">
             <Formik
               initialValues={valoresIniciales}
               onSubmit={onSubmit}
@@ -157,10 +167,11 @@ export const NewServiceForm = () => {
               handleSubmit,
               setFieldValue,
             }) => (
-              <div className="flex w-full items-center justify-center mt-4 ">
-                <div className="w-[70%] h-full overflow-y-auto pb-10 pr-4">
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <NewTitulo texto="NUEVO SERVICIO" />
+            <form onSubmit={handleSubmit} className="space-y-5 h-full">
+              <div className="flex w-full h-full items-center justify-center mt-4 ">
+                <div className="w-[70%] h-full pb-36 pr-4 flex flex-col overflow-y-auto">
+                  <div className="space-y-3 h-full overflow-y-auto">
+                    <NewTitulo texto="NUEVO SERVICIO"/>
                     <InputNew value={values.nombre_proyecto} onChange={handleChange} error={errors.nombre_proyecto} texto="Titulo del proyecto" name="nombre_proyecto" type="text" />
                     <div className="flex flex-row w-full h-auto">
                     <ButtonNew value={values.empresa} onChange={handleChange} error={errors.empresa} name="empresa" type="text" texto="Empresa"  options={nombresCompanis} label="Seleccione una empresa" onSelect={(value) => manejarSelect("empresa" ,value, setFieldValue)}/>
@@ -174,7 +185,7 @@ export const NewServiceForm = () => {
                               <h2 className="text-xl font-josefin pt-1">Personal:</h2>
                               <div className="flex flex-wrap h-auto px-3 space-x-3">
                                 {selectedItems.map((item) => (
-                                  <>    
+                                  <>
                                   <ItemSeleccionable key={item.id} name={item.name} selected={() => selection(item.id)} isSelected={item.isSelected} />
                                   </>
                                 ))}
@@ -190,16 +201,15 @@ export const NewServiceForm = () => {
                               </div>
                             ))}
                           </div>
-                              {/* <h2>Fetched usuarios: {`usuarios: ${JSON.stringify(users)}`}</h2> */}
                         </div>
                       ) : (
-                        <>
+                        <div className="h-[200px]">
                         <div>Hubo un error al cargar los usuarios</div>
-                        </>
+                        </div>
                       )}
                       <br />
                       <NewTitulo texto="VEHICULO"/>
-                  </form>
+                      </div>
                 </div>
                 <div className="w-[30%] h-full pl-3 pb-20">
                   <div className="w-full h-[100%] relative bg-gris rounded-3xl overflow-hidden flex flex-col px-3 pt-10 items-center">
@@ -215,6 +225,7 @@ export const NewServiceForm = () => {
                   </div>
                 </div>
               </div>
+            </form>
             )}
             </Formik>
       </div>

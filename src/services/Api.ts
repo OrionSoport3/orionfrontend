@@ -37,4 +37,23 @@ export class Api {
             data: dataResponse
         }
     }
+ 
+    static async postActivitie<T>(url: string, data: any ,token: string | null): Promise<any> {
+        const response = await fetch(`${Api.baseUrl}${url}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(data),
+        });
+
+        const dataResponse = await response.json();
+
+        return {
+            statusCode: response.status,
+            data: dataResponse
+        }
+    }
+ 
 }
