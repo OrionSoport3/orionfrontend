@@ -14,11 +14,12 @@ import { setItems } from "../store/select";
 import { selected, unselect } from "../store/empresas";
 import { ButtonNew } from "../utils/ButtonNew";
 import { InputDate } from "../utils/InputDate";
+import { CarroSeleccionable } from "../utils/CarroSeleccionable";
 
 export const NewServiceForm = () => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-
+  
   // Almacenar informacion de las llamadas de la Api
+  const [fotos, setFotos] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [companis, setEmpresas] = useState<any[]>([]);
   const [sucursaless, setSucursales] = useState<any[]>([]);
@@ -69,14 +70,23 @@ export const NewServiceForm = () => {
     setUsers(updatedUsers);
   }
 
-  const fetchCompanis = async () => {
+  const fetchAll = async () => {
     if (!token) {
-      console.error('El token no es válido');
-      return
+      console.error('Token is null or undefined');
+      return;
     }
     try {
-      const response = await Api.withToken('companies', token);
-      const empresas = response.data.empresas_sucursales.map((empresas: any) => ({
+      const response = await Api.withToken('get', token);
+      console.log(response);
+      const usuarios = response.data.personal.map((user: any) => ({
+          id: user.id,
+          name: user.nombre,
+          departamento: user.departamento,
+          isSelected: usuariosState.find((storedUser: any) => storedUser.id === user.id)?.isSelected || false,
+          
+        }));
+      setUsers(usuarios);      
+       const empresas = response.data.empresas_sucursales.map((empresas: any) => ({
           id_empresa: empresas.id_empresa,
           nombre_empresa: empresas.nombre_empresa,
           sucursales: empresas.sucursales.map((sucursales: any) => ({
@@ -88,34 +98,24 @@ export const NewServiceForm = () => {
           })),
       }));
       setEmpresas(empresas);
-    } catch (error) {
-      console.error('Error fetching companies:', error);
-      throw new Error('Failed to fetch companies');
-    }
-  }
- 
-  const fetchUsers = async () => {
-    if (!token) {
-      console.error('Token is null or undefined');
-      return;
-    }
-    try {
-      const response = await Api.withToken('get', token);
-      const usuarios = response.data.user.map((user: any) => ({
-          id: user.id,
-          name: user.nombre,
-          departamento: user.departamento,
-          isSelected: usuariosState.find((storedUser: any) => storedUser.id === user.id)?.isSelected || false,
-      }));
-     setUsers(usuarios);      
+      try {
+        const response = await Api.withToken('fotos', token);
+        const fotosCarro = response.data.fotos.map((carros: any) => ({
+          modelo: carros.modelo,
+          fotoUrl: carros.ruta,
+          descripcion: carros.descripcion,
+        }));
+        setFotos(fotosCarro);    
+      } catch (error) {
+        console.log(error);
+      }
     } catch (error) {
         console.error('Error fetching users:', error);
         throw new Error('Failed to fetch users');
     }
   }
     useEffect(() => {
-      fetchUsers();
-      fetchCompanis();
+      fetchAll();
     }, [token]);
 
   const validationSchema = Yup.object({
@@ -144,9 +144,10 @@ export const NewServiceForm = () => {
     personal: personal,
    }
 
-   const response  = await Api.postActivitie('activities', mensaje, token);
+  //  const response  = await Api.postActivitie('activities', mensaje, token);
 
-   console.log(response);
+  //  console.log(response);
+   console.log(mensaje);
 
   }
 
@@ -209,6 +210,14 @@ export const NewServiceForm = () => {
                       )}
                       <br />
                       <NewTitulo texto="VEHICULO"/>
+                        <h2 className="text-xl font-josefin pt-1">Seleccionar vehiculo</h2>
+                      <div className="grid grid-cols-3 gap-4 w-full h-auto">
+                        <div>
+                          {fotos.map((fotito, index) => (
+                            <CarroSeleccionable key={index} modelo={fotito.modelo} imgUrl={fotito.fotoUrl} />
+                          ))}
+                        </div>
+                      </div>
                       </div>
                 </div>
                 <div className="w-[30%] h-full pl-3 pb-20">

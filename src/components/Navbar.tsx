@@ -30,7 +30,7 @@ export const Navbar = ({estilo, isForm}: Properties)  => {
       return
     }
     try {
-      const response = await Api.withToken('logout',token);     
+      const response = await Api.withToken('auth/logout',token);     
       if (response.statusCode === 200) {
         dispatch(unselect());
         dispatch(clearSelectedUsers());
@@ -69,7 +69,7 @@ export const Navbar = ({estilo, isForm}: Properties)  => {
             <button onClick={toggleNavbar}><img src={`${isForm ? '/menu-white.png' : '/menu-regular-240.png'}`} className='ml-4 w-7 sm:w-10 BP1:hidden block'/></button>
           </div>
           <div className={`flex flex-col space-y-2 mt-3 md:flex-row BP1:justify-between md:w-7/12  transform transition-all duration-300 BP1:pl-5 ${openNavbar ? 'h-[200px] BP1:h-auto opacity-100' : 'h-[0px] opacity-0 pointer-events-none'}`}>
-            <div className="font-josefin py-2 font-bold md:text-base text-base sm:text-xl  border-black"><Link to={'/welcome'}>Historial de servicios</Link></div>
+            <div className="font-josefin py-2 font-bold md:text-base text-base sm:text-xl  border-black"><Link to={'/welcome'}>Panel de actividades</Link></div>
             <div className="text-sm py-2 md:py-0 md:text-base border-t-1 border-black"><Link to={'/login'}>Empresas</Link></div>
             <div className="text-sm py-2 md:py-0 md:text-base border-t-1 border-black"><a href="">Servicios</a></div>
             <div className="text-sm py-2 md:py-0 md:text-base border-t-1 border-black"><a href="">Personal</a></div>

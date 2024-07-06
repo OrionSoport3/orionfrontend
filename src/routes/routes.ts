@@ -1,3 +1,4 @@
+import { InsertPhotos } from "../components/pruebas/InsertPhotos";
 import Customers from "../pages/Customers";
 import Login from "../pages/Login";
 import { NewServiceForm } from "../pages/NewServiceForm";
@@ -43,5 +44,9 @@ export const routes = [
                 protected: true,
             },
         ],
+    }, {
+        path: "/insert_photo",
+        element: InsertPhotos,
+        protected: true
     },
 ];
