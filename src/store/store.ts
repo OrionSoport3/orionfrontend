@@ -6,17 +6,19 @@ import selectedReducer from "./select"
 import { thunk, ThunkDispatch } from "redux-thunk";
 import { useDispatch } from "react-redux";
 import empresasReducer from './empresas';
+import carroReducer from './carro'
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['select', 'auth', 'empresas']
+  whitelist: ['select', 'auth', 'empresas', 'carro']
 };
 
 const rootReducer = combineReducers({
   auth: authReducer,
   select: selectedReducer,
   empresas: empresasReducer,
+  carro: carroReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

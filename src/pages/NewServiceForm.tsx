@@ -19,6 +19,7 @@ import { CarroSeleccionable } from "../utils/CarroSeleccionable";
 export const NewServiceForm = () => {
   
   // Almacenar informacion de las llamadas de la Api
+  const [chequeaEsto, setChequea] = useState<any[]>([]);
   const [fotos, setFotos] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [companis, setEmpresas] = useState<any[]>([]);
@@ -35,10 +36,19 @@ export const NewServiceForm = () => {
   //Despacho judicial
   const dispatch = useAppDispatch();
 
-  // buscar propiedades
   const nombresCompanis = companis.map(empresarios_modestos => empresarios_modestos.nombre_empresa);
   const selectedItems = users.filter(user => user.isSelected);
   const unselectedItems = users.filter(user => !user.isSelected);
+
+  //cambiar estado del vehiculo seleccionado
+  const chequearCarro = (id: number) => {
+    setFotos(prevFotos =>
+      prevFotos.map(foto =>
+        foto.id === id ? { ...foto, chequeado: !foto.chequeado } : { ...foto, chequeado: false }
+      )
+    );
+  };
+
   
   const manejarSelect = (field: string, value: string, setFieldValue: (field: any, value: string, shouldValidate?: boolean | undefined) => void) => {
     dispatch(unselect());
@@ -59,13 +69,13 @@ export const NewServiceForm = () => {
       setSucursalCompani(company);
       setFieldValue(field, value);
       dispatch(selected(company));
-      console.log(empresaState);
     }
   };
   
 
   const selection = (id: number) => {
     const updatedUsers =  users.map(user => user.id ===id ? {...user, isSelected: !user.isSelected} : user);
+
     dispatch(setItems(updatedUsers));
     setUsers(updatedUsers);
   }
@@ -77,7 +87,6 @@ export const NewServiceForm = () => {
     }
     try {
       const response = await Api.withToken('get', token);
-      console.log(response);
       const usuarios = response.data.personal.map((user: any) => ({
           id: user.id,
           name: user.nombre,
@@ -101,9 +110,11 @@ export const NewServiceForm = () => {
       try {
         const response = await Api.withToken('fotos', token);
         const fotosCarro = response.data.fotos.map((carros: any) => ({
+          id: carros.carro_id ,
           modelo: carros.modelo,
           fotoUrl: carros.ruta,
           descripcion: carros.descripcion,
+          chequeado: false,
         }));
         setFotos(fotosCarro);    
       } catch (error) {
@@ -116,6 +127,7 @@ export const NewServiceForm = () => {
   }
     useEffect(() => {
       fetchAll();
+      console.log(fotos);
     }, [token]);
 
   const validationSchema = Yup.object({
@@ -123,11 +135,10 @@ export const NewServiceForm = () => {
     empresa: Yup.string().required("Por favor seleccione una empresa"),
     sucursal: Yup.string().required("Por favor elija la sucursal"),
     resume: Yup.string(),
-    fecha_inicial: Yup.date().required('Por favor ingrese una fecha de inicio'),
-    fecha_final: Yup.date().required(),
+    fecha_inicial: Yup.date().min(new Date(), 'La fecha debe ser posterior a la fecha actual').required('Por favor ingrese una fecha de inicio'),
+    fecha_final: Yup.date().min(new Date(), 'La fecha debe ser posterior a la fecha actual').required('Por favor seleccione una ficha de finalización'),
   })
 
-  const personal = selectedItems.map((item: {name: string}) => item.name);
 
   const valoresIniciales = {
     nombre_proyecto: '',
@@ -139,17 +150,25 @@ export const NewServiceForm = () => {
   }
 
   const onSubmit = async (values: typeof valoresIniciales) => {
-   const mensaje = {
-    ...values,
-    personal: personal,
-   }
+    const personal = selectedItems.map((item: {name: string}) => item.name);
+    const carroChequeado = fotos.find(objeto => objeto.chequeado === true)?.modelo;
 
-  //  const response  = await Api.postActivitie('activities', mensaje, token);
-
-  //  console.log(response);
-   console.log(mensaje);
-
+    const mensaje = {
+      ...values,
+      personal: personal,
+      vehiculo: carroChequeado,
+    }
+    console.log(mensaje);
   }
+
+  // Agrupar usuarios no seleccionados por departamento
+  const groupedUnselectedItems = unselectedItems.reduce((acc: any, item) => {
+    if (!acc[item.departamento]) {
+      acc[item.departamento] = [];
+    }
+    acc[item.departamento].push(item);
+    return acc;
+  }, {});
 
   return (
     <div className="w-screen h-screen overflow-hidden fixed text-black flex flex-col items-center bg-gradient-to-t from-gray-300 to-colores-pantalla-form px-7">
@@ -157,6 +176,8 @@ export const NewServiceForm = () => {
       <Toaster/>
       <div className="flex flex-col w-full h-full">
             <Formik
+              validateOnChange={false}
+              validateOnBlur={false}
               initialValues={valoresIniciales}
               onSubmit={onSubmit}
               validationSchema={validationSchema}
@@ -168,10 +189,10 @@ export const NewServiceForm = () => {
               handleSubmit,
               setFieldValue,
             }) => (
-            <form onSubmit={handleSubmit} className="space-y-5 h-full">
-              <div className="flex w-full h-full items-center justify-center mt-4 ">
-                <div className="w-[70%] h-full pb-36 pr-4 flex flex-col overflow-y-auto">
-                  <div className="space-y-3 h-full overflow-y-auto">
+            <form onSubmit={handleSubmit} className="space-y-6 h-full">
+              <div className="flex w-full pt-3 h-full items-center justify-center  ">
+                <div className="w-[70%] h-full pb-24 pr-4 flex flex-col overflow-y-auto">
+                  <div className="space-y-4 h-full overflow-y-auto pr-4 pb-8">
                     <NewTitulo texto="NUEVO SERVICIO"/>
                     <InputNew value={values.nombre_proyecto} onChange={handleChange} error={errors.nombre_proyecto} texto="Titulo del proyecto" name="nombre_proyecto" type="text" />
                     <div className="flex flex-row w-full h-auto">
@@ -181,44 +202,42 @@ export const NewServiceForm = () => {
                     <InputNew value={values.resume} onChange={handleChange} error={errors.resume} rows={5} texto="Resumen del proyecto" name="resume" type="text" css="h-auto P-2" center="items-start"/>
                     <NewTitulo texto="PERSONAL ENCARGADO"/>
                     {users.length > 0 ? (
-                        <div className={`w-[100%] overflow-hidden flex flex-col ${unselectedItems.length > 0 ? 'h-[350px]' : 'h-auto'}`}>
+                        <div className={`w-[100%] overflow-hidden flex flex-col ${unselectedItems.length > 0 ?  `h-[300px]`: 'h-auto' }`}>
                           <div className="w-full h-auto pb-6 pr-8 flex flex-row border-b-[1px] border-b-gray-400">
                               <h2 className="text-xl font-josefin pt-1">Personal:</h2>
                               <div className="flex flex-wrap h-auto px-3 space-x-3">
                                 {selectedItems.map((item) => (
                                   <>
-                                  <ItemSeleccionable key={item.id} name={item.name} selected={() => selection(item.id)} isSelected={item.isSelected} />
+                                  <ItemSeleccionable key={item.id} name={item.name} selected={() => selection(item.id)} isSelected={item.isSelected}/>
                                   </>
                                 ))}
                               </div>
                           </div>
-                          <div className="w-full h-auto space-y-2 pt-5">
-                            {unselectedItems.map((item, index) => (
-                              <div key={item.id} className="w-full h-auto pl-4">
-                                {index === 0 || item.departamento !== unselectedItems[index - 1].departamento ? (
-                                  <h2 className="font-josefin py-3">{item.departamento}</h2>
-                                ) : null}
-                                <ItemSeleccionable key={item.id} name={item.name} selected={() => selection(item.id)} isSelected={item.isSelected}/>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="h-[200px]">
-                        <div>Hubo un error al cargar los usuarios</div>
-                        </div>
-                      )}
-                      <br />
-                      <NewTitulo texto="VEHICULO"/>
-                        <h2 className="text-xl font-josefin pt-1">Seleccionar vehiculo</h2>
-                      <div className="grid grid-cols-3 gap-4 w-full h-auto">
-                        <div>
-                          {fotos.map((fotito, index) => (
-                            <CarroSeleccionable key={index} modelo={fotito.modelo} imgUrl={fotito.fotoUrl} />
+                          <div className="w-full h-auto space-y-2 grid grid-cols-2 pt-5">
+                          {Object.entries(groupedUnselectedItems).map(([departamento, items]: [string, any]) => (
+                            <div key={departamento} className="w-full h-auto pl-4 space-y-2">
+                              <h2 className="font-josefin py-3">{departamento}</h2>
+                              {items.map((item: any) => (
+                                <ItemSeleccionable key={item.id} name={item.name} selected={() => selection(item.id)} isSelected={item.isSelected} />
+                              ))}
+                            </div>
                           ))}
                         </div>
                       </div>
+                    ) : (
+                      <div className="h-[200px]">
+                        <div>Hubo un error al cargar los usuarios</div>
                       </div>
+                    )}
+                      <br />
+                      <NewTitulo texto="VEHICULO"/>
+                        <h2 className="text-xl font-josefin pt-1 pb-4 border-b-[1px] border-b-gray-400">Moverse en:</h2>
+                      <div className="grid grid-cols-3 gap-4 w-full h-auto">
+                        {fotos.map((fotito, index) => (
+                          <CarroSeleccionable key={index} modelo={fotito.modelo} imgUrl={fotito.fotoUrl} toggleChecked={() => chequearCarro(fotito.id)} chequeado={fotito.chequeado}/>
+                        ))}
+                      </div>
+                    </div>
                 </div>
                 <div className="w-[30%] h-full pl-3 pb-20">
                   <div className="w-full h-[100%] relative bg-gris rounded-3xl overflow-hidden flex flex-col px-3 pt-10 items-center">

@@ -22,7 +22,9 @@ export default {
       'josefin': ['Josefin Sans', 'sans-serif'],
       'marcellus': ['Marcellus SC', 'serif'],
       'league': ['League Gothic', 'sans-serif'],
-      'crushed': ['Crushed', 'sans-serif']
+      'crushed': ['Crushed', 'sans-serif'],
+      'alumni-sans': ['Alumni Sans', 'sans'],
+      'mukta': ['Mukta Malar', 'sans-serif']
     },
     extend: {
       screens: {
@@ -68,7 +70,8 @@ export default {
         'fondo-register': "url('/fondito.jpeg')",
         'fondito': "url('/fondo_restablecer.jpeg')",
         'rectangulo-azul': "url('/Rectangle_melt.png')",
-        'logout-white': "url('/logout-white.png')"
+        'logout-white': "url('/logout-white.png')",
+        'unchecked': "url('/checkbox-regular.png')"
       },
       width: {
         'anchito': '26rem',
