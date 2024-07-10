@@ -18,7 +18,7 @@ export const Navbar = ({estilo, isForm}: Properties)  => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const token = useSelector((state: RootState) => state.auth.token)
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const toggleNavbar = () => {
     setOpenr(!openNavbar);

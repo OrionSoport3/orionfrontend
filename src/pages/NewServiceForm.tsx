@@ -15,14 +15,17 @@ import { selected, unselect } from "../store/empresas";
 import { ButtonNew } from "../utils/ButtonNew";
 import { InputDate } from "../utils/InputDate";
 import { CarroSeleccionable } from "../utils/CarroSeleccionable";
+import { CreateBoton } from "../components/Subcomponents/CreateBoton";
 
-export const NewServiceForm = () => {
+export  const NewServiceForm = () => {
   
   // Almacenar informacion de las llamadas de la Api
   const [chequeaEsto, setChequea] = useState<any[]>([]);
   const [fotos, setFotos] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [carro, setCarro] = useState<string>('');
   const [companis, setEmpresas] = useState<any[]>([]);
+  const [vendedores, setVendedor] = useState<any[]>([]);
   const [sucursaless, setSucursales] = useState<any[]>([]);
   const [selectionCompani, setSelected] = useState<any>({}); 
   const [sucusal_compani, setSucursalCompani] = useState<any>({}); 
@@ -37,19 +40,26 @@ export const NewServiceForm = () => {
   const dispatch = useAppDispatch();
 
   const nombresCompanis = companis.map(empresarios_modestos => empresarios_modestos.nombre_empresa);
-  const selectedItems = users.filter(user => user.isSelected);
-  const unselectedItems = users.filter(user => !user.isSelected);
+  const unselectedItems = users;
+  const vendedorsito = vendedores.map(objetito => objetito.nombre_vendedor);
+  const carroChequeado = fotos.find(objeto => objeto.chequeado === true)?.modelo;
+
 
   //cambiar estado del vehiculo seleccionado
-  const chequearCarro = (id: number) => {
+  const chequearCarro = (id: number, field: string, setFieldValue:(field: string, value: string, shouldValidate?: boolean | undefined) => void) => {
     setFotos(prevFotos =>
       prevFotos.map(foto =>
         foto.id === id ? { ...foto, chequeado: !foto.chequeado } : { ...foto, chequeado: false }
       )
     );
-  };
 
-  
+    if (field === "carro") {
+      const carrito = fotos.find(carrito => carrito.id === id).modelo;
+      setFieldValue(field, carrito);
+      setCarro(carrito);
+      console.log(carrito);
+    }
+  };
   const manejarSelect = (field: string, value: string, setFieldValue: (field: any, value: string, shouldValidate?: boolean | undefined) => void) => {
     dispatch(unselect());
     if (field === "empresa") {
@@ -70,6 +80,7 @@ export const NewServiceForm = () => {
       setFieldValue(field, value);
       dispatch(selected(company));
     }
+
   };
   
 
@@ -107,6 +118,10 @@ export const NewServiceForm = () => {
           })),
       }));
       setEmpresas(empresas);
+      const vendedores = response.data.vendedor.map((vendedor: any) => ({
+        nombre_vendedor: vendedor.nombre_vendedor,
+      }));
+      setVendedor(vendedores);
       try {
         const response = await Api.withToken('fotos', token);
         const fotosCarro = response.data.fotos.map((carros: any) => ({
@@ -127,7 +142,6 @@ export const NewServiceForm = () => {
   }
     useEffect(() => {
       fetchAll();
-      console.log(fotos);
     }, [token]);
 
   const validationSchema = Yup.object({
@@ -137,6 +151,8 @@ export const NewServiceForm = () => {
     resume: Yup.string(),
     fecha_inicial: Yup.date().min(new Date(), 'La fecha debe ser posterior a la fecha actual').required('Por favor ingrese una fecha de inicio'),
     fecha_final: Yup.date().min(new Date(), 'La fecha debe ser posterior a la fecha actual').required('Por favor seleccione una ficha de finalización'),
+    vendedor: Yup.string().required("Este campo no puede quedar vacío"),
+    carro: Yup.string().required(),
   })
 
 
@@ -146,12 +162,15 @@ export const NewServiceForm = () => {
     sucursal: '',
     resume: '',
     fecha_inicial: '',
-    fecha_final: ''
+    fecha_final: '',
+    vendedor: '',
+    inconveniente: '',
+    carro: carro,
   }
 
   const onSubmit = async (values: typeof valoresIniciales) => {
+    const selectedItems = users.filter(user => user.isSelected === true);
     const personal = selectedItems.map((item: {name: string}) => item.name);
-    const carroChequeado = fotos.find(objeto => objeto.chequeado === true)?.modelo;
 
     const mensaje = {
       ...values,
@@ -159,10 +178,16 @@ export const NewServiceForm = () => {
       vehiculo: carroChequeado,
     }
     console.log(mensaje);
+    try {
+      const response = await Api.postActivitie('new_activity', mensaje, token);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  // Agrupar usuarios no seleccionados por departamento
-  const groupedUnselectedItems = unselectedItems.reduce((acc: any, item) => {
+
+  const groupedUnselectedItems = unselectedItems.reduce((acc: { [key: string]: any[] }, item) => {
     if (!acc[item.departamento]) {
       acc[item.departamento] = [];
     }
@@ -170,13 +195,42 @@ export const NewServiceForm = () => {
     return acc;
   }, {});
 
+
+  const column1: JSX.Element[] = [];
+  const column2: JSX.Element[] = [];
+
+  Object.entries(groupedUnselectedItems).forEach(([departamento, items]: [string, any], index: number) => {
+    const columnContent = (
+      <div key={departamento} className="w-full pl-4 space-y-2 py-2">
+        <h2 className="font-josefin py-3 font-bold">{departamento}</h2>
+        <div className="flex flex-col">
+          {items.map((item: any) => (
+            <div key={item.id} className="col-span-1">
+              <ItemSeleccionable
+                key={item.id}
+                name={item.name}
+                selected={() => selection(item.id)}
+                isSelected={item.isSelected}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
+    if (index % 2 === 0) {
+      column1.push(columnContent);
+    } else {
+      column2.push(columnContent);
+    }
+  });
+
   return (
     <div className="w-screen h-screen overflow-hidden fixed text-black flex flex-col items-center bg-gradient-to-t from-gray-300 to-colores-pantalla-form px-7">
       <Navbar/>
       <Toaster/>
       <div className="flex flex-col w-full h-full">
             <Formik
-              validateOnChange={false}
               validateOnBlur={false}
               initialValues={valoresIniciales}
               onSubmit={onSubmit}
@@ -200,29 +254,21 @@ export const NewServiceForm = () => {
                     <ButtonNew value={values.sucursal} onChange={handleChange} error={errors.sucursal} name="sucursal" type="text" texto="Sucursal"  options={sucursaless} label="Seleccione una sucursal" onSelect={(value) => manejarSelect('sucursal', value,setFieldValue)}/>
                     </div>
                     <InputNew value={values.resume} onChange={handleChange} error={errors.resume} rows={5} texto="Resumen del proyecto" name="resume" type="text" css="h-auto P-2" center="items-start"/>
+                    <NewTitulo texto="VENDEDOR"/>
+                    <div className="w-3/4">
+                      <InputNew value={values.vendedor} onChange={handleChange} error={errors.vendedor} name="vendedor" type="text" texto="Vendedor"/>
+                    </div>
                     <NewTitulo texto="PERSONAL ENCARGADO"/>
                     {users.length > 0 ? (
-                        <div className={`w-[100%] overflow-hidden flex flex-col ${unselectedItems.length > 0 ?  `h-[300px]`: 'h-auto' }`}>
-                          <div className="w-full h-auto pb-6 pr-8 flex flex-row border-b-[1px] border-b-gray-400">
-                              <h2 className="text-xl font-josefin pt-1">Personal:</h2>
-                              <div className="flex flex-wrap h-auto px-3 space-x-3">
-                                {selectedItems.map((item) => (
-                                  <>
-                                  <ItemSeleccionable key={item.id} name={item.name} selected={() => selection(item.id)} isSelected={item.isSelected}/>
-                                  </>
-                                ))}
-                              </div>
+                        <div className={`w-[100%] overflow-hidden flex flex-col`}>
+                          <div className={`w-full flex pt-5`} style={{ height: `${users.length * 56}px` }}>
+                          <div className="w-1/2 pr-2 flex flex-col space-y-2">
+                            {column1}
                           </div>
-                          <div className="w-full h-auto space-y-2 grid grid-cols-2 pt-5">
-                          {Object.entries(groupedUnselectedItems).map(([departamento, items]: [string, any]) => (
-                            <div key={departamento} className="w-full h-auto pl-4 space-y-2">
-                              <h2 className="font-josefin py-3">{departamento}</h2>
-                              {items.map((item: any) => (
-                                <ItemSeleccionable key={item.id} name={item.name} selected={() => selection(item.id)} isSelected={item.isSelected} />
-                              ))}
-                            </div>
-                          ))}
-                        </div>
+                          <div className="w-1/2 pl-2 flex flex-col space-y-2">
+                            {column2}
+                          </div>
+                          </div>
                       </div>
                     ) : (
                       <div className="h-[200px]">
@@ -232,9 +278,10 @@ export const NewServiceForm = () => {
                       <br />
                       <NewTitulo texto="VEHICULO"/>
                         <h2 className="text-xl font-josefin pt-1 pb-4 border-b-[1px] border-b-gray-400">Moverse en:</h2>
+                        {errors.carro}
                       <div className="grid grid-cols-3 gap-4 w-full h-auto">
                         {fotos.map((fotito, index) => (
-                          <CarroSeleccionable key={index} modelo={fotito.modelo} imgUrl={fotito.fotoUrl} toggleChecked={() => chequearCarro(fotito.id)} chequeado={fotito.chequeado}/>
+                          <CarroSeleccionable value={values.carro} key={index} modelo={fotito.modelo} imgUrl={fotito.fotoUrl} toggleChecked={() => chequearCarro(fotito.id, "carro", setFieldValue)} chequeado={fotito.chequeado}/>
                         ))}
                       </div>
                     </div>
@@ -246,8 +293,11 @@ export const NewServiceForm = () => {
                       <br />
                       <InputDate texto="Fecha inicial" name="fecha_inicial" value={values.fecha_inicial} error={errors.fecha_inicial} onChange={handleChange}/>
                       <br />
-                      <InputDate texto="Fecha final" name="fecha_final" value={values.fecha_final} error={errors.fecha_final} onChange={handleChange}/>
-                      <SignBoton inside="CREAR SERVICIO" type="submit"/>
+                      <InputDate texto="Fecha tentativa de finalizado" name="fecha_final" value={values.fecha_final} error={errors.fecha_final} onChange={handleChange}/>
+                      <div className="w-full items-center text-center bg-[#262F4B] rounded-2xl py-3 px-3">
+                        <InputDate texto="Inconvenientes" name="inconvenientes" value={values.inconveniente} type="text" onChange={handleChange}/>
+                      </div>
+                      <CreateBoton inside="CREAR SERVICIO" type="submit"/>
                     </div>
                     <div className="w-full bottom-0 absolute h-4/6 bg-[#565E78] rounded-tl-full z-0"></div>
                   </div>

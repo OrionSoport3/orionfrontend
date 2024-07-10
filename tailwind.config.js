@@ -24,9 +24,14 @@ export default {
       'league': ['League Gothic', 'sans-serif'],
       'crushed': ['Crushed', 'sans-serif'],
       'alumni-sans': ['Alumni Sans', 'sans'],
-      'mukta': ['Mukta Malar', 'sans-serif']
+      'mukta': ['Mukta Malar', 'sans-serif'],
+      'manjari': ['Manjari Regular', 'sans'],
+      'NATS': ['NATS Regular', 'serif'],
     },
     extend: {
+      gridTemplateColumns: {
+        'dos': '1fr 1fr'
+      },
       screens: {
         'iPad': '820px',
         'med': '1385px',

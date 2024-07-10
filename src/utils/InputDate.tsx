@@ -9,6 +9,7 @@ type InputComponentProps = {
     value?: string | number;
     errorStyle?: string;
     texto: string;
+    type?: 'text' | 'date';
     css?: string;
     center?: string;
     rows?: number
@@ -18,6 +19,7 @@ type InputComponentProps = {
 export const InputDate = (
     {
         texto,
+        type,
         onChange,
         value,
         error,
@@ -38,7 +40,7 @@ export const InputDate = (
                 <input
                     value={value}
                     onChange={onChange}
-                    type="date"
+                    type={type ?? 'date'}
                     name={name}
                     id={id}
                     className={`bg-white w-full rounded-full md:rounded-lg outline-none px-3 border-gray-300 border-2 ${css ?? 'h-8 md:h-9'} py-1`}

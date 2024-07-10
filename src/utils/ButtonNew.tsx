@@ -79,7 +79,7 @@ export const ButtonNew = ({
                             aria-orientation="vertical"
                             aria-labelledby="options-menu"
                         >
-                            <div className={` bg-white rounded-2xl BP1:rounded-md border-2 border-gray-300 h-[${options.length}px] max-h-[140px] overflow-y-auto`}>
+                            <div className={` bg-white rounded-2xl BP1:rounded-md border-2 border-gray-300  max-h-[140px] overflow-y-auto`}>
                                 {options.map((option, index) => (
                                     <button
                                         key={index}

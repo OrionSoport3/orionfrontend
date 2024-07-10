@@ -2,7 +2,7 @@ import { Formik } from "formik";
 import { Navbar } from "../components/loginComponents/Navbar";
 import { InputLogin } from "../components/Subcomponents/InputLogin";
 import { SignBoton } from "../components/Subcomponents/SignBoton";
-import { Toaster, toast } from "sonner";
+import { Toaster } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
 import { useAppDispatch } from "../store/store";
@@ -59,6 +59,7 @@ const Login = () => {
               <div className="w-11/12 pt-5 pl-3 BP1:pl-0 flex flex-row h-auto">
                 <h3 className="BP1:text-xl text-base text-white hover:text-blue-300 font-josefin relative"><Link to="/restablecer_contraseña">¿Olvidó su contraseña?</Link></h3>
               </div>
+              
               <SignBoton inside="Ingresar" type="submit" />
             </form>
           )}

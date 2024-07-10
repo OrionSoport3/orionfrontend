@@ -7,10 +7,15 @@ import { Actividad } from '../components/Actividad';
 
 const Welcome: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(true);
+  const [activity, setActivity] = useState<any[]>([]);
 
   const toggleMenu = () => {
     setMenuAbierto(!menuAbierto);
   };
+
+  const DisplayActivity = (index: number) => {
+
+  }
 
   useEffect(() => {
     const ajustarMenuSegunPantalla = () => {
@@ -33,7 +38,9 @@ const Welcome: React.FC = () => {
         <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} />
         <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 ${menuAbierto ? ' w-[0] md:w-11/12 opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
           <Subnavbar />
-          <Actividad/>
+          <div className='w-auto h-full  overflow-y-auto overflow-x-hidden pl-2'>
+            <Actividad/>
+          </div>
           <div className='absolute bottom-28 right-0 BP1:bottom-20 BP1:right-8 '>
             <SrBoton ruta='/new_service' contenido='NUEVO SERVICIO'/>
           </div>
