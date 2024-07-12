@@ -16,16 +16,19 @@ import { ButtonNew } from "../utils/ButtonNew";
 import { InputDate } from "../utils/InputDate";
 import { CarroSeleccionable } from "../utils/CarroSeleccionable";
 import { CreateBoton } from "../components/Subcomponents/CreateBoton";
+import { useNavigate } from "react-router-dom";
+import { clearSelectedUsers } from "../store/form";
 
 export  const NewServiceForm = () => {
   
+  const navigate = useNavigate();
+
   // Almacenar informacion de las llamadas de la Api
   const [chequeaEsto, setChequea] = useState<any[]>([]);
   const [fotos, setFotos] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [carro, setCarro] = useState<string>('');
   const [companis, setEmpresas] = useState<any[]>([]);
-  const [vendedores, setVendedor] = useState<any[]>([]);
   const [sucursaless, setSucursales] = useState<any[]>([]);
   const [selectionCompani, setSelected] = useState<any>({}); 
   const [sucusal_compani, setSucursalCompani] = useState<any>({}); 
@@ -40,26 +43,29 @@ export  const NewServiceForm = () => {
   const dispatch = useAppDispatch();
 
   const nombresCompanis = companis.map(empresarios_modestos => empresarios_modestos.nombre_empresa);
-  const unselectedItems = users;
-  const vendedorsito = vendedores.map(objetito => objetito.nombre_vendedor);
+  // const vendedorsito = vendedores.map(objetito => objetito.nombre_vendedor);
   const carroChequeado = fotos.find(objeto => objeto.chequeado === true)?.modelo;
 
 
   //cambiar estado del vehiculo seleccionado
-  const chequearCarro = (id: number, field: string, setFieldValue:(field: string, value: string, shouldValidate?: boolean | undefined) => void) => {
-    setFotos(prevFotos =>
-      prevFotos.map(foto =>
-        foto.id === id ? { ...foto, chequeado: !foto.chequeado } : { ...foto, chequeado: false }
-      )
-    );
-
+  const chequearCarro = (id: number, field: string, setFieldValue: (field: string, value: string, shouldValidate?: boolean | undefined) => void) => {
     if (field === "carro") {
+      setFotos(prevFotos =>
+        prevFotos.map(foto =>
+          foto.id === id ? { ...foto, chequeado: !foto.chequeado } : { ...foto, chequeado: false }
+        )
+      );
       const carrito = fotos.find(carrito => carrito.id === id).modelo;
-      setFieldValue(field, carrito);
-      setCarro(carrito);
-      console.log(carrito);
+      if (fotos.find((carrito: any) => carrito.id === id).chequeado) {
+        setFieldValue(field, '');
+      } else {
+        setFieldValue(field, carrito);
+        setCarro(carrito);
+      }
     }
+
   };
+  
   const manejarSelect = (field: string, value: string, setFieldValue: (field: any, value: string, shouldValidate?: boolean | undefined) => void) => {
     dispatch(unselect());
     if (field === "empresa") {
@@ -81,12 +87,12 @@ export  const NewServiceForm = () => {
       dispatch(selected(company));
     }
 
+
   };
   
 
   const selection = (id: number) => {
     const updatedUsers =  users.map(user => user.id ===id ? {...user, isSelected: !user.isSelected} : user);
-
     dispatch(setItems(updatedUsers));
     setUsers(updatedUsers);
   }
@@ -118,10 +124,7 @@ export  const NewServiceForm = () => {
           })),
       }));
       setEmpresas(empresas);
-      const vendedores = response.data.vendedor.map((vendedor: any) => ({
-        nombre_vendedor: vendedor.nombre_vendedor,
-      }));
-      setVendedor(vendedores);
+
       try {
         const response = await Api.withToken('fotos', token);
         const fotosCarro = response.data.fotos.map((carros: any) => ({
@@ -152,7 +155,7 @@ export  const NewServiceForm = () => {
     fecha_inicial: Yup.date().min(new Date(), 'La fecha debe ser posterior a la fecha actual').required('Por favor ingrese una fecha de inicio'),
     fecha_final: Yup.date().min(new Date(), 'La fecha debe ser posterior a la fecha actual').required('Por favor seleccione una ficha de finalización'),
     vendedor: Yup.string().required("Este campo no puede quedar vacío"),
-    carro: Yup.string().required(),
+    carro: Yup.string().required('Por favor seleccione un vehiculo'),
   })
 
 
@@ -165,36 +168,40 @@ export  const NewServiceForm = () => {
     fecha_final: '',
     vendedor: '',
     inconveniente: '',
-    carro: carro,
+    carro: '',
   }
 
-  const onSubmit = async (values: typeof valoresIniciales) => {
+  const onSubmit = async (values: typeof valoresIniciales, ) => {
     const selectedItems = users.filter(user => user.isSelected === true);
+    console.log(selectedItems);
     const personal = selectedItems.map((item: {name: string}) => item.name);
-
+    console.log(personal);
+    
     const mensaje = {
       ...values,
       personal: personal,
       vehiculo: carroChequeado,
     }
     console.log(mensaje);
+
+    console.log(mensaje);
     try {
       const response = await Api.postActivitie('new_activity', mensaje, token);
-      console.log(response);
+      if (response.statusCode === 200) {
+        console.log(response);
+      }
     } catch (error) {
       console.log(error);
     }
   }
 
-
-  const groupedUnselectedItems = unselectedItems.reduce((acc: { [key: string]: any[] }, item) => {
+  const groupedUnselectedItems = users.reduce((acc: { [key: string]: any[] }, item) => {
     if (!acc[item.departamento]) {
       acc[item.departamento] = [];
     }
     acc[item.departamento].push(item);
     return acc;
   }, {});
-
 
   const column1: JSX.Element[] = [];
   const column2: JSX.Element[] = [];
@@ -231,6 +238,7 @@ export  const NewServiceForm = () => {
       <Toaster/>
       <div className="flex flex-col w-full h-full">
             <Formik
+              validateOnChange={false}
               validateOnBlur={false}
               initialValues={valoresIniciales}
               onSubmit={onSubmit}
@@ -244,7 +252,7 @@ export  const NewServiceForm = () => {
               setFieldValue,
             }) => (
             <form onSubmit={handleSubmit} className="space-y-6 h-full">
-              <div className="flex w-full pt-3 h-full items-center justify-center  ">
+              <div className="flex w-full pt-3 h-full items-center justify-center">
                 <div className="w-[70%] h-full pb-24 pr-4 flex flex-col overflow-y-auto">
                   <div className="space-y-4 h-full overflow-y-auto pr-4 pb-8">
                     <NewTitulo texto="NUEVO SERVICIO"/>
@@ -277,8 +285,10 @@ export  const NewServiceForm = () => {
                     )}
                       <br />
                       <NewTitulo texto="VEHICULO"/>
+                      
                         <h2 className="text-xl font-josefin pt-1 pb-4 border-b-[1px] border-b-gray-400">Moverse en:</h2>
-                        {errors.carro}
+                        <small className={`text-red-500 text-base font-bold mt-2 visible`}>{errors.carro}</small>
+                        
                       <div className="grid grid-cols-3 gap-4 w-full h-auto">
                         {fotos.map((fotito, index) => (
                           <CarroSeleccionable value={values.carro} key={index} modelo={fotito.modelo} imgUrl={fotito.fotoUrl} toggleChecked={() => chequearCarro(fotito.id, "carro", setFieldValue)} chequeado={fotito.chequeado}/>
@@ -288,14 +298,14 @@ export  const NewServiceForm = () => {
                 </div>
                 <div className="w-[30%] h-full pl-3 pb-20">
                   <div className="w-full h-[100%] relative bg-gris rounded-3xl overflow-hidden flex flex-col px-3 pt-10 items-center">
-                    <div className="flex flex-col w-full h-auto items-center z-50 px-5 space-y-3">
+                    <div className={`flex flex-col w-full h-auto items-center z-50 px-5 ${errors.fecha_final || errors.fecha_inicial ? 'space-y-4' : 'space-y-8'}`}>
                       <h1 className="font-marcellus text-white text-3xl">PROGRAMAR FECHA</h1>
                       <br />
                       <InputDate texto="Fecha inicial" name="fecha_inicial" value={values.fecha_inicial} error={errors.fecha_inicial} onChange={handleChange}/>
                       <br />
                       <InputDate texto="Fecha tentativa de finalizado" name="fecha_final" value={values.fecha_final} error={errors.fecha_final} onChange={handleChange}/>
                       <div className="w-full items-center text-center bg-[#262F4B] rounded-2xl py-3 px-3">
-                        <InputDate texto="Inconvenientes" name="inconvenientes" value={values.inconveniente} type="text" onChange={handleChange}/>
+                      <InputDate texto="Inconvenientes" name="inconveniente" value={values.inconveniente} type="text" onChange={handleChange}/>
                       </div>
                       <CreateBoton inside="CREAR SERVICIO" type="submit"/>
                     </div>

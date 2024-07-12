@@ -7,7 +7,7 @@ type Props = {
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const CarroSeleccionable = ({modelo, imgUrl,value, toggleChecked, chequeado} : Props) => {
+export const CarroSeleccionable = ({modelo, imgUrl, value, toggleChecked, chequeado} : Props) => {
 
   return (
     <button type="button" onClick={toggleChecked} className={`rounded-2xl flex flex-col h-full p-4 ${chequeado ? 'bg-[#3D445A]' : 'bg-[#a9a9b3] hover:bg-[#b6b6ba] transition-all duration-150'}`}>

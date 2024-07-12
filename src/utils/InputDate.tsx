@@ -32,12 +32,12 @@ export const InputDate = (
     }: InputComponentProps
 ) => {
   return (
-    <div className={`flex flex-col py-2 w-full px-2 space-y-2 ${center ?? 'items-center'}`}>
+    <div className={`flex flex-col w-full px-2 ${center ?? 'items-center'}`}>
             <div className="flex flex-col w-full items-center justify-center">
                 <label htmlFor="text" className="text-xl text-white font-josefin w-full" >
                     {texto}:
                 </label>
-                <input
+                <Field
                     value={value}
                     onChange={onChange}
                     type={type ?? 'date'}
