@@ -19,12 +19,6 @@ type Props = {
 
 export const Actividad = ({toDisplay,isOpen , fecha_inicio, fecha_final, estado, empresa, sucursal, titulo_proyecto, personal, resumen, vehiculo }: Props, ) => {
 
-    useEffect(() => {
-        console.log(personal);
-    });
-
-    const [color, setColor] = useState<string>('');
-
 
   return (
     <div className='w-full h-auto flex flex-col py-8 space-x-3 space-y-2'>
@@ -48,7 +42,7 @@ export const Actividad = ({toDisplay,isOpen , fecha_inicio, fecha_final, estado,
                         <h1 className="font-manjari text-white text-md">{fecha_inicio}</h1><h1 className="text-white text-md font-manjari">{fecha_final}</h1>
                     </div>
                 </button>
-                <div className="transition-all duration-200 flex flex-col items-center w-full">
+                <div className="transition-all duration-200 flex flex-col items-center w-full bg-white">
                     { isOpen 
                     ?  
                     <div className="w-10/12 h-auto flex flex-col py-4 align-text-bottom ">

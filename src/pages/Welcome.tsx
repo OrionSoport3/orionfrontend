@@ -8,12 +8,19 @@ import { Api } from '../services/Api';
 import { RootState } from '../store/store';
 import { useSelector } from 'react-redux';
 
+interface ActividadData {
+  fecha_final: string;
+}
+
 const Welcome: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(true);
   const [activity, setActivity] = useState<any[]>([]);
+  const [dateActivity, setDateActivity] = useState<any[]>([]);
   const [personitas, setPersonas] = useState<any[]>([]);
 
   const token = useSelector((state: RootState) => state.auth.token);
+
+
 
 
   const toggleMenu = () => {
@@ -25,9 +32,7 @@ const Welcome: React.FC = () => {
     setPersonas(people);
   }
 
-  const DisplayActivity = (index: number) => {
 
-  }
 
   useEffect(() => {
     const ajustarMenuSegunPantalla = () => {
@@ -66,7 +71,6 @@ const Welcome: React.FC = () => {
         vehiculo: activities.vehiculo
       }));
       setActivity(actividades);
-      console.log(actividades);
     } catch (error) {
       console.error('Error fetching activities:', error);
       throw new Error('Failed to fetch users');
@@ -74,7 +78,86 @@ const Welcome: React.FC = () => {
   }
   useEffect(() => {
     fetchActivities();
+    
   }, [token]);
+
+  const fecha = new Date();
+
+
+  const fechaString = fecha.toISOString().split('T')[0];
+
+  const dia = fecha.getDate();
+  const mes = fecha.getMonth();
+  const año = fecha.getFullYear();
+  
+    
+  
+  
+  const objetosFecha: JSX.Element[] = []; 
+
+  const groupFechasItem = activity.reduce((acc: { [key: string]: { [key: string] : any[]} }, item) => {
+    
+    if (!acc[item.fecha_final.split('-')[1]]) {
+      acc[] = [];
+    }
+    acc[item.fecha_final].push(item);
+    return acc;
+  }, {});
+
+  Object.entries(groupFechasItem).forEach(([fecha_final, item]: [string, any], index: number) => {
+
+    const [year, month, day] = fecha_final.split('-');
+
+    const monthNames = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    const monthName = monthNames[parseInt(month, 10) - 1];
+
+    const actividadesFecha = (
+      <>
+      <div className='w-full h-auto'><button><h2 className="font-marcellus font-semibold text-3xl"></h2></button></div>
+      <div className=''><button><h3 className="font-mukta text-2xl">{day} de {monthName} de {year}</h3></button></div>
+      <div className='w-full h-auto'>
+        {item.map((itemsito: any) => (
+          <div key={itemsito.id_actividad} className=''>
+            <Actividad
+            empresa={itemsito.empresa}
+            sucursal={itemsito.sucursal}
+            fecha_inicio={itemsito.fecha_inicio}
+            fecha_final={itemsito.fecha_final}
+            titulo_proyecto={itemsito.titulo}
+            personal={itemsito.personal}
+            resumen={itemsito.resumen}
+            vehiculo={itemsito.vehiculo}
+            estado={itemsito.estado}
+            isOpen
+             />
+          </div>
+        ))}
+      </div>
+      {/* {activity.map((actividades: any, index) => (
+        <div key={index} className=''> 
+          <Actividad
+            empresa={actividades.empresa} 
+            sucursal={actividades.sucursal} 
+            fecha_inicio={actividades.fecha_inicio} 
+            fecha_final={actividades.fecha_final}
+            titulo_proyecto={actividades.titulo}
+            personal={actividades.personal}
+            resumen={actividades.resumen}
+            vehiculo={actividades.vehiculo}
+            estado={actividades.estado}
+            isOpen
+            />
+        </div>
+        ))} */}
+      </>
+    )
+    objetosFecha.push(actividadesFecha);
+  })
+  
+
 
   return (
     <div className="fixed w-screen h-screen px-4 BP1:px-6 bg-design-one bg-no-repeat bg-contain bg-fixed text-black bg-colores-pantalla">
@@ -85,27 +168,9 @@ const Welcome: React.FC = () => {
         <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} />
         <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 ${menuAbierto ? ' w-[0] md:w-11/12 opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
           <Subnavbar />
-          <div className='w-auto h-full pb-32  overflow-y-auto overflow-x-hidden pl-2'>
-          <div className='w-full h-auto'><button><h2 className="font-marcellus font-semibold text-3xl">{}{} MAYO 2024</h2></button></div>
-          <div className=''><button><h3 className="font-mukta text-2xl">{} 8 de Julio de 2024</h3></button></div>
+          <div className='w-auto h-full pb-32 pt-5 overflow-y-auto overflow-x-hidden pl-2'>
             {activity.length > 0 
-              ? 
-              (activity.map((actividades: any, index) => (
-                <div key={index} className=''>
-                  <Actividad 
-                    empresa={actividades.empresa} 
-                    sucursal={actividades.sucursal} 
-                    fecha_inicio={actividades.fecha_inicio} 
-                    fecha_final={actividades.fecha_final}
-                    titulo_proyecto={actividades.titulo}
-                    personal={actividades.personal}
-                    resumen={actividades.resumen}
-                    vehiculo={actividades.vehiculo}
-                    estado={actividades.estado}
-                    isOpen
-                    />
-                </div>
-              ))) 
+              ? objetosFecha       
             : ''
             }
           </div>

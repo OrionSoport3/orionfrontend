@@ -32,11 +32,11 @@ export const Navbar = ({estilo, isForm}: Properties)  => {
     try {
       const response = await Api.withToken('auth/logout',token);     
       if (response.statusCode === 200) {
-        dispatch(unselect());
-        dispatch(clearSelectedUsers());
-        dispatch(logout());
-        navigate('/login');
       }
+      dispatch(unselect());
+      dispatch(clearSelectedUsers());
+      dispatch(logout());
+      navigate('/login');
     } catch (error) {
       console.log(['Error al cerrar sesion', error]);
     }
