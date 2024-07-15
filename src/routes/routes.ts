@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import { NewServiceForm } from "../pages/NewServiceForm";
 import Register from "../pages/Register";
 import { Restablish } from "../pages/Restablish";
+import { ServiceInfo } from "../pages/ServiceInfo";
 import Welcome from "../pages/Welcome";
 import BaseDashboard from "../pages/layouts/BaseDashboard";
 
@@ -12,6 +13,11 @@ export const routes = [
         path: "/welcome",
         element: Welcome,
         protected: true,
+    },
+    {
+        path: "/servicio",
+        element: ServiceInfo,
+        protected: true
     },
     {
         path: "/new_service",

@@ -16,7 +16,7 @@ import { ButtonNew } from "../utils/ButtonNew";
 import { InputDate } from "../utils/InputDate";
 import { CarroSeleccionable } from "../utils/CarroSeleccionable";
 import { CreateBoton } from "../components/Subcomponents/CreateBoton";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { clearSelectedUsers } from "../store/form";
 
 export  const NewServiceForm = () => {
@@ -109,7 +109,6 @@ export  const NewServiceForm = () => {
           name: user.nombre,
           departamento: user.departamento,
           isSelected: usuariosState.find((storedUser: any) => storedUser.id === user.id)?.isSelected || false,
-          
         }));
       setUsers(usuarios);      
        const empresas = response.data.empresas_sucursales.map((empresas: any) => ({
@@ -124,7 +123,6 @@ export  const NewServiceForm = () => {
           })),
       }));
       setEmpresas(empresas);
-
       try {
         const response = await Api.withToken('fotos', token);
         const fotosCarro = response.data.fotos.map((carros: any) => ({
@@ -173,22 +171,17 @@ export  const NewServiceForm = () => {
 
   const onSubmit = async (values: typeof valoresIniciales, ) => {
     const selectedItems = users.filter(user => user.isSelected === true);
-    console.log(selectedItems);
     const personal = selectedItems.map((item: {name: string}) => item.name);
-    console.log(personal);
     
     const mensaje = {
       ...values,
       personal: personal,
       vehiculo: carroChequeado,
     }
-    console.log(mensaje);
-
-    console.log(mensaje);
     try {
       const response = await Api.postActivitie('new_activity', mensaje, token);
       if (response.statusCode === 200) {
-        console.log(response);
+       navigate('/welcome');
       }
     } catch (error) {
       console.log(error);
