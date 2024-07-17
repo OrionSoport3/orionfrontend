@@ -48,7 +48,7 @@ const fetchService = async () => {
 
 useEffect(() => {
 fetchService();
-});
+}, []);
 
   return (
     <div className='w-screen h-screen fixed p-0 m-0'>

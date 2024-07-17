@@ -293,9 +293,9 @@ export  const NewServiceForm = () => {
                   <div className="w-full h-[100%] relative bg-gris rounded-3xl overflow-hidden flex flex-col px-3 pt-10 items-center">
                     <div className={`flex flex-col w-full h-auto items-center z-50 px-5 ${errors.fecha_final || errors.fecha_inicial ? 'space-y-4' : 'space-y-8'}`}>
                       <h1 className="font-marcellus text-white text-3xl">PROGRAMAR FECHA</h1>
-                      <br />
+                      <br/>
                       <InputDate texto="Fecha inicial" name="fecha_inicial" value={values.fecha_inicial} error={errors.fecha_inicial} onChange={handleChange}/>
-                      <br />
+                      <br/>
                       <InputDate texto="Fecha tentativa de finalizado" name="fecha_final" value={values.fecha_final} error={errors.fecha_final} onChange={handleChange}/>
                       <div className="w-full items-center text-center bg-[#262F4B] rounded-2xl py-3 px-3">
                       <InputDate texto="Inconvenientes" name="inconveniente" value={values.inconveniente} type="text" onChange={handleChange}/>

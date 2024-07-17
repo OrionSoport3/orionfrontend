@@ -37,9 +37,8 @@ export class Api {
     static async postFile<T>(url: string, data: any, token: string): Promise<any> {
         
         const formData = new FormData();
-        formData.append('modelo', data.modelo);
-        formData.append('descripcion', data.descripcion);
-        formData.append('foto', data.foto);
+        formData.append('file', data.file);
+        formData.append('id_carpeta', data.id_carpeta);
         
         const response = await fetch(`${Api.baseUrl}${url}`, {
             method: "POST",

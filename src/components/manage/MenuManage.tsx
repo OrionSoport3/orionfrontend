@@ -24,8 +24,9 @@ export const MenuManage = ({empresa, sucursal, titulo, resumen}: Props) => {
                     <MiniManage link="" texto="Usuario y contraseña" img="/user_detail.png" img2="/user_detail_white.png"/>
                 </div>
                 <div className='bg-[#A4AACA] w-full h-full rounded-2xl'>
-                    <div className="w-full h-full py-3 px-4 flex flex-col">
-                        {resumen}
+                    <div className="w-full h-full py-4 px-6 flex flex-col">
+                        <h1 className="font-semibold font-manjari">Resumen:</h1>
+                        <p className="font-manjari">{resumen}</p>
                     </div>
                 </div>
             </div>

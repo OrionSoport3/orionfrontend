@@ -1,7 +1,7 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { persistor, store } from './store/store';
+import { Provider, useSelector } from 'react-redux';
+import { createBrowserRouter, RouterProvider, useParams } from 'react-router-dom';
+import { persistor, RootState, store } from './store/store';
 import { routes } from './routes/routes';
 import ProtectedRoute from './components/filters/ProtectedRoute';
 import PublicRoute from './components/filters/PublicRoutes';
@@ -21,8 +21,14 @@ function App() {
         element: child.protected
           ? <ProtectedRoute element={React.createElement(child.element)}/>
           : React.createElement(child.element),
-      })),
-    }))
+        children: child.children?.map(second => ({
+          path: second.path,
+          element: second.protected 
+          ? <ProtectedRoute element={React.createElement(second.element)}/>
+          : React.createElement(second.element),
+        }))
+      }),
+    )}))
   );
 
   return (

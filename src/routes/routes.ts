@@ -1,6 +1,4 @@
-import { Children } from "react";
 import { InsertPhotos } from "../components/pruebas/InsertPhotos";
-import Customers from "../pages/Customers";
 import Login from "../pages/Login";
 import { NewServiceForm } from "../pages/NewServiceForm";
 import Register from "../pages/Register";
@@ -11,6 +9,9 @@ import { Archivos } from "../pages/layouts/Management/Archivos";
 import { StateDate } from "../pages/layouts/Management/StateDate";
 import { Croquis } from "../pages/layouts/Management/Croquis";
 import UserDetails from "../pages/layouts/Management/UserDetails";
+import { Files } from "../pages/layouts/Management/FilesNames/Files";
+import { Api } from "../services/Api";
+
 
 export const routes = [
     {
@@ -35,6 +36,13 @@ export const routes = [
                 path: "archivos",
                 element: Archivos,
                 protected: true,
+                children: [
+                    {
+                        path: "documentos/:id_carpeta/:nombre_carpeta",
+                        element: Files,
+                        protected: true,
+                    }
+                ],
             }, {
                 path: "detalles_usuario",
                 element: UserDetails,
