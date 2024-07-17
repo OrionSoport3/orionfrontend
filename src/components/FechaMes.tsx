@@ -40,6 +40,7 @@ export const FechaMes = ({objetoFecha, fecha}: Props) => {
                vehiculo={item.vehiculo}
                personal={item.personal}
                resumen={item.resumen}
+               id={item.id_actividad}
                />
              </div> 
             ))}

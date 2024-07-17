@@ -54,6 +54,7 @@ const Welcome: React.FC = () => {
     }
     try {
       const response = await Api.withToken('get_activities', token);
+      console.log(response);
       const actividades = response.data.actividad.map((activities: any) => ({
         id_actividad: activities.id_actividad,
         sucursal: activities.sucursal,
@@ -138,7 +139,7 @@ const Welcome: React.FC = () => {
           <div className='w-auto h-full pb-32 py-5 overflow-y-auto overflow-x-hidden pl-2'>
             {activity.length > 0 
               ? objetosFecha
-            : ''
+            : 'Objeto'
             }
           </div>
           <div className='absolute bottom-28 right-0 BP1:bottom-20 BP1:right-8'>

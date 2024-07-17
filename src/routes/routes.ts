@@ -1,3 +1,4 @@
+import { Children } from "react";
 import { InsertPhotos } from "../components/pruebas/InsertPhotos";
 import Customers from "../pages/Customers";
 import Login from "../pages/Login";
@@ -6,7 +7,10 @@ import Register from "../pages/Register";
 import { Restablish } from "../pages/Restablish";
 import { ServiceInfo } from "../pages/ServiceInfo";
 import Welcome from "../pages/Welcome";
-import BaseDashboard from "../pages/layouts/BaseDashboard";
+import { Archivos } from "../pages/layouts/Management/Archivos";
+import { StateDate } from "../pages/layouts/Management/StateDate";
+import { Croquis } from "../pages/layouts/Management/Croquis";
+import UserDetails from "../pages/layouts/Management/UserDetails";
 
 export const routes = [
     {
@@ -15,9 +19,28 @@ export const routes = [
         protected: true,
     },
     {
-        path: "/servicio",
+        path: "/servicio/:id",
         element: ServiceInfo,
-        protected: true
+        protected: true,
+        children: [
+            {
+                path:"fecha",
+                element: StateDate,
+                protected: true,
+            },{
+                path: "croquis",
+                element: Croquis,
+                protected: true,
+            },{
+                path: "archivos",
+                element: Archivos,
+                protected: true,
+            }, {
+                path: "detalles_usuario",
+                element: UserDetails,
+                protected: true,
+            }
+        ]
     },
     {
         path: "/new_service",
@@ -38,19 +61,7 @@ export const routes = [
         path: "/register",
         element: Register,
         public: true
-    },
-    {
-        path: "/dashboard",
-        element: BaseDashboard,
-        protected: true,
-        children: [
-            {
-                path: "",
-                element: Customers,
-                protected: true,
-            },
-        ],
-    }, {
+    },{
         path: "/insert_photo",
         element: InsertPhotos,
         protected: true

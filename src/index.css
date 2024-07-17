@@ -7,14 +7,13 @@
 
 @font-face {
     font-family: 'Manjari Regular';
-    src: url('../fonts/Manjari-Regular.ttf') format('truetype');
+    src: url('/fonts/Manjari-Regular.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'NATS Regular';
-    src: url('../fonts/NATS-Regular.woff'), format('woff');
+    src: url('/fonts/NATS-Regular.woff'), format('woff');
 }
-
 
 @tailwind base;
 @tailwind components;

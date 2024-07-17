@@ -66,6 +66,7 @@ export default {
         'morado-beli': "",
         'Belize': "#CAD0EE",
         'gris': "#3D445A",
+        'morrado': "#727EB7",
       },
       backgroundImage: {
         'design-one' : "url('/Rectangle.png')",
@@ -76,7 +77,8 @@ export default {
         'fondito': "url('/fondo_restablecer.jpeg')",
         'rectangulo-azul': "url('/Rectangle_melt.png')",
         'logout-white': "url('/logout-white.png')",
-        'unchecked': "url('/checkbox-regular.png')"
+        'unchecked': "url('/checkbox-regular.png')",
+        'rect-morado': "url('/rectangulo-morado.png')",
       },
       width: {
         'anchito': '26rem',

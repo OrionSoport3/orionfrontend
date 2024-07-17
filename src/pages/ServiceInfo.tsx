@@ -1,7 +1,73 @@
-import React from 'react'
+import { Outlet, useParams } from 'react-router-dom'
+import { MenuManage } from '../components/manage/MenuManage'
+import { Navbar } from '../components/Navbar'
+import { useEffect, useState } from 'react';
+import { Api } from '../services/Api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 export const ServiceInfo = () => {
+  const id_Actividad = useParams<{id: string}>();
+  const [servicio, setServicio] = useState<any>({});
+
+
+  const serviceId = id_Actividad.id ? parseInt(id_Actividad.id) : null;
+  const token = useSelector((state: RootState) => state.auth.token);
+
+  const objeto = {
+    id: serviceId,
+  }
+
+  
+const fetchService = async () => {
+  if (!token) {
+    console.error('Token is null or undefined');
+    return;
+  }
+  try {
+    const response = await Api.postActivitie('get_service', objeto, token);
+    const actividad = {
+      id_servicio: response.data.respuesta.id_actividad,
+      estado: response.data.respuesta.estado,
+      fecha_final: response.data.respuesta.fecha_final,
+      fecha_inicial: response.data.respuesta.fecha_inicial,
+      inconvenientes: response.data.respuesta.inconvenientes,
+      empresa: response.data.respuesta.empresa,
+      sucursal: response.data.respuesta.sucursal,
+      titulo: response.data.respuesta.titulo,
+      vehiculo: response.data.respuesta.vehiculo,
+      vendedor: response.data.respuesta.vendedor,
+      resumen: response.data.respuesta.resumen,
+    }
+    setServicio(actividad);
+    console.log(response.data.respuesta);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+useEffect(() => {
+fetchService();
+});
+
   return (
-    <div>ServiceInfo</div>
+    <div className='w-screen h-screen fixed p-0 m-0'>
+      <div className='w-full h-full bg-[#D1D5E8] bg-rect-morado bg-no-repeat bg-fixed bg-contain relative'>
+            <div className='absolute bg-blue-300 right-0 top-32'>{}</div>
+        <div className='w-full h-full px-6'>
+          <Navbar estilo='border-white text-white'/>
+          <div className='w-full h-full pt-6'>
+            <div className='items-center h-full w-full justify-center flex flex-row'>
+              <div className='w-[28%] h-full pr-6'>
+                <MenuManage empresa={servicio.empresa} sucursal={servicio.sucursal} titulo={servicio.titulo} resumen={servicio.resumen}/>
+              </div>
+              <div className='w-full h-full'>
+                <Outlet/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
