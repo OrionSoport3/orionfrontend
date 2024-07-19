@@ -24,12 +24,9 @@ export const Actividad = ({ fecha_inicio, fecha_final, estado, empresa, sucursal
         setAbierto(!abierto);
         console.log(abierto);
     }
-
-
   return (
     <div className={`w-full h-auto flex flex-col  space-x-3 space-y-2 transition-all transform duration-200 ${abierto ? 'py-8' : 'py-2'}`}>
-
-        <div className="w-full auto flex flex-row justify-between h-auto">
+        <div className="w-full flex flex-row justify-between h-auto">
             {estado === 'EN CURSO' && (
                 <div className="w-2/12 flex flex-col justify-center text-2xl font-NATS text-green-600">{estado}</div>
             )}
@@ -74,7 +71,11 @@ export const Actividad = ({ fecha_inicio, fecha_final, estado, empresa, sucursal
                     </button>
                 </div>
             </div>
-            <div className="w-3/12"></div>
+            <div className="w-3/12 h-full">
+                <div className="w-1/2 h-full bg-morrado">
+
+                </div>
+            </div>
         </div>
     </div>
   )

@@ -34,10 +34,11 @@ export class Api {
             data: dataResponse
         }
     }
-    static async postFile<T>(url: string, data: any, token: string): Promise<any> {
+    static async postFile(url: string, data: any, token: string): Promise<any> {
         
         const formData = new FormData();
         formData.append('file', data.file);
+        formData.append('nombre_carpeta', data.nombre_carpeta);
         formData.append('id_carpeta', data.id_carpeta);
         
         const response = await fetch(`${Api.baseUrl}${url}`, {
@@ -47,7 +48,6 @@ export class Api {
             },
             body: formData,
         });
-
         const dataResponse = await response.json();
 
         return {

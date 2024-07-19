@@ -27,7 +27,6 @@ export const Archivos = () => {
         nombre: carpetillas.nombre
       }));
       setCarpetas(responsillo);
-      console.log(response);
     } catch (error) {
       console.log(error);
     }

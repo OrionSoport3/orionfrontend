@@ -6,7 +6,6 @@ import { Formik } from "formik";
 import * as Yup from 'yup';
 import { ItemSeleccionable } from "../utils/ItemSeleccionable";
 import { useSelector } from 'react-redux';
-import { SignBoton } from "../components/Subcomponents/SignBoton";
 import { Toaster } from "sonner";
 import { RootState, useAppDispatch } from "../store/store";
 import { Api } from "../services/Api";
@@ -16,15 +15,13 @@ import { ButtonNew } from "../utils/ButtonNew";
 import { InputDate } from "../utils/InputDate";
 import { CarroSeleccionable } from "../utils/CarroSeleccionable";
 import { CreateBoton } from "../components/Subcomponents/CreateBoton";
-import { Navigate, useNavigate } from "react-router-dom";
-import { clearSelectedUsers } from "../store/form";
+import { useNavigate } from "react-router-dom";
 
 export  const NewServiceForm = () => {
   
   const navigate = useNavigate();
 
   // Almacenar informacion de las llamadas de la Api
-  const [chequeaEsto, setChequea] = useState<any[]>([]);
   const [fotos, setFotos] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [carro, setCarro] = useState<string>('');

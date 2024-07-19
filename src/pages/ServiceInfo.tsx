@@ -40,7 +40,6 @@ const fetchService = async () => {
       resumen: response.data.respuesta.resumen,
     }
     setServicio(actividad);
-    console.log(response.data.respuesta);
   } catch (error) {
     console.log(error);
   }
