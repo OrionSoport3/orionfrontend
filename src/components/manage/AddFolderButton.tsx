@@ -4,6 +4,7 @@ import { Api } from '../../services/Api';
 import { RootState } from '../../store/store';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 type Props = {
   change: () => void,
@@ -16,16 +17,23 @@ export const AddFolderButton: React.FC<Props> = ({ change, mostrar }) => {
 
   const initialValues = {
     nombre: '',
-    id: id,
+    id: id.id,
   };
 
   const onSubmit = async (values: typeof initialValues) => {
     try {
       const response = await Api.postActivitie('post_carpeta', values,token );
-      if (response.statusCode === 202) {
-        change();
-      }
-      console.log(response);
+      switch (response.statusCode) {
+        case 202:
+          toast.success('Nueva carpeta creada exitosamente');
+          change();
+          return;
+        case 422:
+          response.data.message.id ? (toast.error(response.data.message.id)) : '';
+          response.data.message.nombre ? (toast.error(response.data.message.nombre)) : '';
+          return;
+        default:
+        }
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +62,7 @@ export const AddFolderButton: React.FC<Props> = ({ change, mostrar }) => {
           )}
         </Formik>
       ) : (
-        <button onClick={change} className='w-8 h-8 rounded-xl bg-morrado text-white flex justify-center items-center text-3xl hover:h-10 hover:w-10 transform transition-all duration-150'>
+        <button onClick={() => {change()}} id='add' className='w-8 h-8 rounded-xl bg-morrado text-white flex justify-center items-center text-3xl hover:h-10 hover:w-10 transform transition-all duration-150'>
           <h1 className='text-center align-middle -mt-1'>+</h1>
         </button>
       )}

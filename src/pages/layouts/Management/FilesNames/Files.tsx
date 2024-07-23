@@ -25,7 +25,6 @@ export const Files = () => {
     try {
       const response = await Api.postActivitie('ver_archivos', actividad, token);
       const documentos = response.data;
-      console.log(documentos);
 
       setDocumentosYCarpetas(documentos);
 
@@ -54,18 +53,19 @@ export const Files = () => {
         case 'image/png':
         case 'image/jpeg':
         case 'image/gif':
-          return <div className='w-fit h-fit py-5'>
+          return <div className='w-fit h-fit'>
                     <img src={documento_url} alt={nombre} className="preview-image h-24" />
                   </div>;
         case 'application/pdf':
-          return <div className='w-fit h-fit py-5'>
+          return <div className='w-fit h-fit py-3'>
             <img src="/pdf-icon.png" alt="PDF Icon" className="preview-icon h-24" />
           </div>;
         case 'application/vnd.ms-excel':
         case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
           return <img src="/excel-logo.png" alt="Excel Icon" className="preview-icon" />;
         case 'application/vnd.ms-powerpoint':
-          return <img src="ppt-logo.png" alt="PowerPoint Icon" className='preview-icon' />
+        case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+          return <img src="/ppt-logo.png" alt="PowerPoint Icon" className='preview-icon' />
         default:
           return <span>Archivo no soportado</span>;
       }
@@ -75,12 +75,12 @@ export const Files = () => {
   }
 
   return (
-    <div className='w-full h-full overflow-y-auto pt-6'>
+    <div className='w-full h-full pt-6'>
       <AddDocumentButton />
       <div>
-        <ul className='grid grid-cols-7 gap-4 '>
+        <ul className='grid grid-cols-4 gap-4 '>
         {filteredDocuments.map((document: any) => (
-            <li key={document.documento_id} className="document-item py-2 px-3 justify-between bg-[#F0F0F9] rounded-xl flex flex-col items-center">
+            <li key={document.documento_id} className="document-item space-y-3 px-3 justify-center bg-[#F0F0F9] rounded-xl flex flex-col items-center">
               <a href={document.documento_url} target="_blank" rel="noopener noreferrer">
                 {renderDocumentPreview(document)}
               </a>

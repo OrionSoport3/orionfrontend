@@ -7,7 +7,6 @@ import { RootState } from '../../store/store';
 import { useParams } from 'react-router-dom';
 
 export const AddDocumentButton = () => {
-    const [fileUrl, setFileUrl] = useState<string | null>(null);
     const token = useSelector((state: RootState) => state.auth.token);
     const props = useParams<{id_carpeta: string; nombre_carpeta: string}>();
 
@@ -25,7 +24,6 @@ export const AddDocumentButton = () => {
         setFileName('Ningún archivo seleccionado');
       }
     }; 
-
     const initialValues = {
         file: null,
     }
@@ -80,7 +78,7 @@ export const AddDocumentButton = () => {
                       name="file"
                       className='hidden'
                       type="file"
-                      accept='.xlsx,.xls'
+                      accept='.xlsx,.xls,.ppt,.pptx,.doc,.docx,.pdf,.txt,.png,.jpeg,.jpg'
                       onChange={(e) => {
                           if (e.target.files) {
                               setFieldValue('file', e.target.files[0]);

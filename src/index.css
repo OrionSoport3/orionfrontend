@@ -15,6 +15,23 @@
     src: url('/fonts/NATS-Regular.woff'), format('woff');
 }
 
+.no-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 5px;
+}
+
+.no-scroll::-webkit-scrollbar-thumb {
+    background: white;
+    border-color: black;
+    border-radius: 20px;
+}
+
+.no-scroll::-webkit-scrollbar-track-piece {
+    background-color: #727EB7;
+}
+
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

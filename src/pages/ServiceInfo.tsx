@@ -55,14 +55,15 @@ fetchService();
             <div className='absolute bg-blue-300 right-0 top-32'>{}</div>
         <div className='w-full h-full px-6'>
           <Navbar estilo='border-white text-white'/>
-          <div className='w-full h-full pt-6'>
-            <div className='items-center h-full w-full justify-center flex flex-row'>
+          <div className='w-full h-full pt-6 flex flex-row '>
+            <div className='items-center h-full w-full justify-between flex flex-row'>
               <div className='w-[28%] h-full pr-6'>
                 <MenuManage empresa={servicio.empresa} sucursal={servicio.sucursal} titulo={servicio.titulo} resumen={servicio.resumen}/>
               </div>
               <div className='w-full h-full'>
                 <Outlet/>
               </div>
+              <div className='w-[20%] bg-white h-full'>Hola</div>
             </div>
           </div>
         </div>

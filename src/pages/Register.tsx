@@ -67,6 +67,8 @@ const Register = () => {
           initialValues={valoresIniciales}
           onSubmit={onSubmit}
           validationSchema={validationSchema}
+          validateOnChange={false}
+          validateOnBlur={false}
         >
           {({
               values,
