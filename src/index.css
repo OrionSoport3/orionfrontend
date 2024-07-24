@@ -17,7 +17,7 @@
 
 .no-scroll::-webkit-scrollbar {
     width: 10px;
-    height: 5px;
+    height: 7px;
 }
 
 .no-scroll::-webkit-scrollbar-thumb {
@@ -27,9 +27,8 @@
 }
 
 .no-scroll::-webkit-scrollbar-track-piece {
-    background-color: #727EB7;
+    background-color: #5b669d;
 }
-
 
 
 @tailwind base;

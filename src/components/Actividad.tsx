@@ -47,7 +47,7 @@ export const Actividad = ({ fecha_inicio, fecha_final, estado, empresa, sucursal
                 </button>
                 <div className={`flex flex-col items-center w-full transition-all transform duration-300 bg-white ${abierto ? `opacity-100 max-h-[300px]` : 'opacity-0 max-h-0'}`}>
                     <div className={`w-10/12 flex flex-col py-4 align-text-bottom`}>
-                        <DetallesProyecto prop="Titulo del proyecto" titulo_proyecto={`${titulo_proyecto} titulo proyecto`}/>
+                        <DetallesProyecto prop="Titulo del proyecto" titulo_proyecto={`${titulo_proyecto}`}/>
                         <div className="flex flex-row items-baseline h-auto w-full space-x-5 space-y-2">
                             <div className="w-2/6">
                                 <h1 className="font-manjari font-bold">Encargados de sitio</h1>

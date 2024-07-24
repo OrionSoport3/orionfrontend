@@ -50,22 +50,19 @@ fetchService();
 }, []);
 
   return (
-    <div className='w-screen h-screen fixed p-0 m-0'>
+    <div className='w-screen h-screen  p-0 m-0'>
       <div className='w-full h-full bg-[#D1D5E8] bg-rect-morado bg-no-repeat bg-fixed bg-contain relative'>
-            <div className='absolute bg-blue-300 right-0 top-32'>{}</div>
-        <div className='w-full h-full px-6'>
+            <div className='absolute bg-blue-300 right-0 top-32 h-full'>{}</div>
+        <div className='w-full px-6'>
           <Navbar estilo='border-white text-white'/>
-          <div className='w-full h-full pt-6 flex flex-row '>
-            <div className='items-center h-full w-full justify-between flex flex-row'>
-              <div className='w-[28%] h-full pr-6'>
+            <div className='items-cente w-full flex flex-row'>
+              <div className='flex-auto h-full'>
                 <MenuManage empresa={servicio.empresa} sucursal={servicio.sucursal} titulo={servicio.titulo} resumen={servicio.resumen}/>
               </div>
-              <div className='w-full h-full'>
+              <div className='flex-[9_9_0%] h-full overflow-hidden'>
                 <Outlet/>
               </div>
-              <div className='w-[20%] bg-white h-full'>Hola</div>
             </div>
-          </div>
         </div>
       </div>
     </div>

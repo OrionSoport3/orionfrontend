@@ -29,13 +29,13 @@ export const AddFolderButton: React.FC<Props> = ({ change, mostrar }) => {
           change();
           return;
         case 422:
-          response.data.message.id ? (toast.error(response.data.message.id)) : '';
-          response.data.message.nombre ? (toast.error(response.data.message.nombre)) : '';
+          response.data.message.id ? toast.error(response.data.message.id) : '';
+          response.data.message.nombre ? toast.error(response.data.message.nombre) : '';
           return;
         default:
         }
     } catch (error) {
-      console.log(error);
+      toast.error(JSON.stringify(error));
     }
   };
 

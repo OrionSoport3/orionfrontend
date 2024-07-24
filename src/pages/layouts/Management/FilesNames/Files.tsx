@@ -53,19 +53,17 @@ export const Files = () => {
         case 'image/png':
         case 'image/jpeg':
         case 'image/gif':
-          return <div className='w-fit h-fit'>
-                    <img src={documento_url} alt={nombre} className="preview-image h-24" />
-                  </div>;
+          return <img src={documento_url} alt={nombre} className="preview-image max-h-24" />;
         case 'application/pdf':
-          return <div className='w-fit h-fit py-3'>
-            <img src="/pdf-icon.png" alt="PDF Icon" className="preview-icon h-24" />
+          return <div className='w-fit h-fit'>
+            <img src="/pdf-icon.png" alt="PDF Icon" className="h-24"/>
           </div>;
         case 'application/vnd.ms-excel':
         case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-          return <img src="/excel-logo.png" alt="Excel Icon" className="preview-icon" />;
+          return <img src="/excel-logo.png" alt="Excel Icon" className="h-24"/>;
         case 'application/vnd.ms-powerpoint':
         case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-          return <img src="/ppt-logo.png" alt="PowerPoint Icon" className='preview-icon' />
+          return <img src="/ppt-logo.png" alt="PowerPoint Icon" className="h-[65px]"/>;
         default:
           return <span>Archivo no soportado</span>;
       }
@@ -75,16 +73,16 @@ export const Files = () => {
   }
 
   return (
-    <div className='w-full h-full pt-6'>
-      <AddDocumentButton />
-      <div>
-        <ul className='grid grid-cols-4 gap-4 '>
+    <div className='w-full h-full'>
+      <AddDocumentButton/>
+      <div className='h-full w-full '>
+        <ul className='grid grid-cols 3 sm:grid-cols-4 lg:grid-cols-5 BP1-5:grid-cols-6 BP2:grid-cols-7 gap-4'>
         {filteredDocuments.map((document: any) => (
-            <li key={document.documento_id} className="document-item space-y-3 px-3 justify-center bg-[#F0F0F9] rounded-xl flex flex-col items-center">
-              <a href={document.documento_url} target="_blank" rel="noopener noreferrer">
-                {renderDocumentPreview(document)}
+            <li key={document.documento_id} className="px-3 justify-center bg-[#F0F0F9] rounded-xl flex flex-col items-center">
+              <a href={document.documento_url} target="_blank" rel="noopener noreferrer" className='h-24 flex flex-col items-center justify-center'>
+                  {renderDocumentPreview(document)}
               </a>
-                <span className='w-28 text-center text-wrap truncate'>{document.nombre}</span>
+                <span className='w-28 text-center text-sm text-wrap truncate'>{document.nombre}</span>
             </li>
           ))}
         </ul>

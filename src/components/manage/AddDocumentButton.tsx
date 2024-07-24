@@ -77,6 +77,7 @@ export const AddDocumentButton = () => {
                       id="file-upload"
                       name="file"
                       className='hidden'
+                      multiple
                       type="file"
                       accept='.xlsx,.xls,.ppt,.pptx,.doc,.docx,.pdf,.txt,.png,.jpeg,.jpg'
                       onChange={(e) => {
