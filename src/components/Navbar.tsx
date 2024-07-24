@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, RootState } from '../store/store';
 import { logout } from '../store';
@@ -60,7 +60,7 @@ export const Navbar = ({estilo, isForm}: Properties)  => {
   }, []);
 
   return (
-    <div className={`border-b-2 w-[100%] pt-2 BP1:pb-2 ${estilo ?? 'border-black'}`}>
+    <div className={`border-b-2 w-full py-1 h-auto ${estilo ?? 'border-black'}`}>
       <div className='flex flex-row justify-between w-full items-center'>
         <div className={`flex flex-col flex-grow justify-start  items-start md:flex-row md:items-center`}>
         <img src="/logo_orion.jpg" className="w-10 h-10 BP1:block hidden"/>

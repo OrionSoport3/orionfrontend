@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import { Formik } from 'formik';
 import { Api } from '../../services/Api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
@@ -53,7 +52,7 @@ export const AddDocumentButton = () => {
     });
 
   return (
-    <div className='w-fit h-fit flex flex-col justify-center absolute right-6 bottom-6'>
+    <div className='w-fit h-fit flex flex-col justify-center absolute bottom-8 right-12'>
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}

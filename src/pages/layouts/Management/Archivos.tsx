@@ -55,33 +55,34 @@ export const Archivos = () => {
 
 
   return (
-    <div className="w-full pl-6 overflow-hidden h-full">
+    <div className="w-full h-full pl-6 flex flex-col">
       <Toaster richColors position="bottom-right"/>
-      <div className="w-full flex flex-row items-center justify-center">
-        <h2 className="font-NATS text-4xl">ARCHIVOS DEL SERVICIO</h2>
+      <div className="w-full h-10 flex items-center justify-center">
+        <h2 className="font-NATS text-4xl shadow-white ">ARCHIVOS DEL SERVICIO</h2>
       </div>
-      <div className="w-full h-full">
-        <div className="space-x-4 items-center overflow-x-auto no-scroll py-1 h-20 flex">
-          <div ref={containerRef} id="add" className="h-full w-full">
-            <AddFolderButton change={togglePopup} mostrar={newCarpeta} />
-          </div>
-          <div className="flex flex-row space-x-3 items-center">
-            {carpetas.map((carpeta: any) => (
-              <div key={carpeta.id_carpeta} id={carpeta.id_carpeta}>
-                {carpeta.nombre === carpeta_nombre.nombre_carpeta ? (
-                  <FolderButton nombre={carpeta.nombre} id_carpeta={carpeta.id_carpeta} css="bg-moradito" />
-                ) : (
-                  <FolderButton nombre={carpeta.nombre} id_carpeta={carpeta.id_carpeta} />
-                )}
-              </div>
-            ))}
-          </div>
+      <div className="w-full flex overflow-x-auto overflow-y-hidden no-scroll h-20 items-center space-x-4">
+        <div ref={containerRef} id="add" className="h-10 flex flex-col items-center justify-center">
+          <AddFolderButton change={togglePopup} mostrar={newCarpeta}/>
         </div>
-        <div className="w-full pb-20 h-full overflow-y-auto mt-4">
+        <div className="w-max flex space-x-4 flex-row items-center justify-center">
+          {carpetas.map((carpeta: any) => (
+            <div key={carpeta.id_carpeta} id={carpeta.id_carpeta} className="w-full h-full">
+              {carpeta.nombre === carpeta_nombre.nombre_carpeta ? (
+                <FolderButton nombre={carpeta.nombre} id_carpeta={carpeta.id_carpeta} css="bg-moradito"/>
+              ) : (
+                <FolderButton nombre={carpeta.nombre} id_carpeta={carpeta.id_carpeta}/>
+              )}
+            </div>
+          ))} 
+        </div>
+      </div>
+      <div className=" w-full h-full overflow-x-hidden flex">
+        <div className="w-full h-full">
           <Outlet />
         </div>
       </div>
     </div>
-
   );
+  
+  
 };
