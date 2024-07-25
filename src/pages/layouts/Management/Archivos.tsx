@@ -1,21 +1,24 @@
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useOutletContext, useParams } from "react-router-dom";
 import { AddFolderButton } from "../../../components/manage/AddFolderButton";
 import { FolderButton } from "../../../components/manage/FolderButton";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Api } from "../../../services/Api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { Toaster } from "sonner";
+import { PopWindow } from "../../../components/PopWindow";
 
 
 export const Archivos = () => {
   const [carpetas, setCarpetas] = useState<any[]>([]);
   const [newCarpeta, setNewCarpeta] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const carpeta_nombre = useParams<{nombre_carpeta: string}>();
-  const id = useParams<{id: string}>();
+  const carpeta_nombre = useParams<{ nombre_carpeta: string }>();
+  const id = useParams<{ id: string }>();
   const token = useSelector((state: RootState) => state.auth.token);
-  
+
+  const { onFileSelect, onActive } = useOutletContext<{ onFileSelect: (file: any) => void; onActive: (value: boolean) => void; }>();
+
   const togglePopup = () => {
     setNewCarpeta((prev) => !prev);
   };
@@ -58,6 +61,7 @@ export const Archivos = () => {
     <div className="w-full h-full pl-6 flex flex-col">
       <Toaster richColors position="bottom-right"/>
       <div className="w-full h-10 flex items-center justify-center">
+        <h2>{}</h2>
         <h2 className="font-NATS text-4xl shadow-white ">ARCHIVOS DEL SERVICIO</h2>
       </div>
       <div className="w-full flex overflow-x-auto overflow-y-hidden no-scroll h-20 items-center space-x-4">
@@ -78,7 +82,7 @@ export const Archivos = () => {
       </div>
       <div className=" w-full h-full overflow-x-hidden flex">
         <div className="w-full h-full">
-          <Outlet />
+        <Outlet context={{ onFileSelect: onFileSelect, onConflictFile: onActive}}/>
         </div>
       </div>
     </div>

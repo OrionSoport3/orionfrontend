@@ -5,9 +5,15 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { useParams } from 'react-router-dom';
 
-export const AddDocumentButton = () => {
+type Props = {
+  onChange: (newValue: boolean) => void;
+  onConflict: (file: any) => void;
+}
+
+export const AddDocumentButton = ({onChange, onConflict}: Props) => {
     const token = useSelector((state: RootState) => state.auth.token);
     const props = useParams<{id_carpeta: string; nombre_carpeta: string}>();
+    const [isActive, setIsActive] = useState<boolean>(false);
 
     const [fileName, setFileName] = useState<string>('');
 
@@ -39,8 +45,18 @@ export const AddDocumentButton = () => {
       }
         try {
             const response = await Api.postFile('subir_archivo', amigos, token);
-            if (response.statusCode === 201) {
-              setFileName('');
+            switch (response.statusCode) {
+              case 201:
+                return setFileName('');
+              case 409:
+                const valor = true;
+                setIsActive(valor);
+                onChange(valor);
+                onConflict(amigos.file);
+                return;
+              default:
+                console.log(response.data)
+                break;
             }
         } catch (error) {
             console.log('error', error);
