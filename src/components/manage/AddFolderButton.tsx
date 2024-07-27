@@ -27,6 +27,7 @@ export const AddFolderButton: React.FC<Props> = ({ change, mostrar }) => {
         case 202:
           toast.success('Nueva carpeta creada exitosamente');
           change();
+          window.location.reload();
           return;
         case 422:
           response.data.message.id ? toast.error(response.data.message.id) : '';

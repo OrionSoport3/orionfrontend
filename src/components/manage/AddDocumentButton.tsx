@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import { Api } from '../../services/Api';
 import { useSelector } from 'react-redux';
@@ -8,12 +8,13 @@ import { useParams } from 'react-router-dom';
 type Props = {
   onChange: (newValue: boolean) => void;
   onConflict: (file: any) => void;
+  onContent: (objeto: any) => void;
+  value: boolean;
 }
 
-export const AddDocumentButton = ({onChange, onConflict}: Props) => {
+export const AddDocumentButton = ({onChange, onConflict, value, onContent}: Props) => {
     const token = useSelector((state: RootState) => state.auth.token);
     const props = useParams<{id_carpeta: string; nombre_carpeta: string}>();
-    const [isActive, setIsActive] = useState<boolean>(false);
 
     const [fileName, setFileName] = useState<string>('');
 
@@ -29,9 +30,11 @@ export const AddDocumentButton = ({onChange, onConflict}: Props) => {
         setFileName('Ningún archivo seleccionado');
       }
     }; 
+
     const initialValues = {
         file: null,
     }
+
 
     const onSubmit = async (values: typeof initialValues) => {
         const amigos = {
@@ -47,28 +50,28 @@ export const AddDocumentButton = ({onChange, onConflict}: Props) => {
             const response = await Api.postFile('subir_archivo', amigos, token);
             switch (response.statusCode) {
               case 201:
-                return setFileName('');
+                setFileName('');
+                window.location.reload();
+                break; 
               case 409:
-                const valor = true;
-                setIsActive(valor);
-                onChange(valor);
+                onChange(!value);
+                onContent({icono: '/error-regular-240.png', texto1: 'El archivo', texto2: 'ya se encuentra actualmente en la carpeta. ¿Desea reemplazarlo?', aviso: 'Advertencia'});
                 onConflict(amigos.file);
-                return;
+                setFileName('');
+                break;
               default:
-                console.log(response.data)
+                console.log(response.data);
                 break;
             }
         } catch (error) {
             console.log('error', error);
         }
     }
-  
-    useEffect(() => {
-      console.log();
-    });
+
+
 
   return (
-    <div className='w-fit h-fit flex flex-col justify-center absolute bottom-8 right-12'>
+    <div className='w-fit h-fit flex flex-col justify-center absolute bottom-8 right-12 z-40'>
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}
@@ -80,9 +83,14 @@ export const AddDocumentButton = ({onChange, onConflict}: Props) => {
           <form onSubmit={handleSubmit} encType='multipart/form-data' className='flex flex-col text-white items-center justify-center'>
             <div className='flex flex-col items-center'>
               {fileName 
-              ?  <div className='cursor-pointer text-white bg-morrado font-NATS text-xl py-2 px-4 rounded-xl flex flex-col'>
-                    <span className="border-b-2">{fileName}</span>
-                    <button className='' type="submit">SUBIR</button>
+              ?  <div className='cursor-pointer  text-white bg-morrado font-NATS text-xl py-2 pl-3 rounded-xl h-full flex flex-row items-center'>
+                    <div className='flex flex-col w-full'>
+                      <span className="border-b-2">{fileName}</span>
+                      <button className='' type="submit">SUBIR</button>
+                    </div>
+                    <button onClick={() => {setFileName('')}} className='h-full px-3'>
+                      <img src="/trash_can.png" alt="Delete Icon" className='h-8 w-9'/>
+                    </button>
                 </div>
               : <>
                   <label htmlFor="file-upload" className="cursor-pointer bg-morrado text-white py-2 px-4 rounded-lg font-NATS text-2xl">

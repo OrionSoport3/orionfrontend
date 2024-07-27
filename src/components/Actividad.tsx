@@ -67,7 +67,7 @@ export const Actividad = ({ fecha_inicio, fecha_final, estado, empresa, sucursal
                 </div>
                 <div className="absolute bottom-4 right-8">
                     <button className="flex flex-row h-[28px] w-[28px]">
-                        <Link to={`/servicio/${id}`}><img src="../edit.png" /></Link>
+                        <Link to={`/servicio/${id}/archivos`}><img src="../edit.png" /></Link>
                     </button>
                 </div>
             </div>

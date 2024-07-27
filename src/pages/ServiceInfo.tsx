@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { Api } from '../services/Api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { ErrorMessage } from 'formik';
 import { PopWindow } from '../components/PopWindow';
 import { toast, Toaster } from 'sonner';
 
@@ -13,6 +12,8 @@ export const ServiceInfo = () => {
   const id_Actividad = useParams<{ id: string }>();
   const [servicio, setServicio] = useState<any>({});
   const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [contenido, setContenido] = useState<any>(null);
+  const [carpeta, setCarpeta] = useState<any>(null);
   const [showPopWindow, setShowPopWindow] = useState<boolean>(false);  
   const serviceId = id_Actividad.id ? parseInt(id_Actividad.id) : null;
   const token = useSelector((state: RootState) => state.auth.token);
@@ -26,6 +27,27 @@ export const ServiceInfo = () => {
     id_carpeta: props.id_carpeta,
     nombre_carpeta: props.nombre_carpeta,
     file: selectedFile
+  }
+
+  const infoCarpeta = (carpeta: any) => {
+    if (carpeta) {
+      setCarpeta(carpeta);
+      setShowPopWindow(true);
+    }
+  }
+
+
+  const deleteCarpetasAndDocuments = async () => {
+    if (!token) {
+      return toast.error('Ups, no hay token');
+    }
+    try {
+      const deleteCarpeta = await Api.postActivitie('delete_carpeta', carpeta, token);
+      if (deleteCarpeta.statusCode === 200) {
+        window.location.reload();
+      }
+    } catch (error) {
+    }
   }
 
   const fetchService = async () => {
@@ -54,51 +76,86 @@ export const ServiceInfo = () => {
     }
   };
 
+  const isActive = (value: boolean) => {
+    if (value === false) {
+      return toast.info('No hay mensaje?¿');
+    }
+    setShowPopWindow(value);
+  }
+
+  const isFile = (file: any): file is File => file instanceof File;
+  
   const handleAccept = async () => {
     if (!token) {
       return toast.error('Ups, no hay token');
     }
     try {
-      const eliminateDoc = await Api.postFile('replace_document', data, token);
-      if (eliminateDoc.statusCode === 200) {
-        toast.success('Elemento borrado');
-        const replaceDocument = await Api.postFile('subir_archivo', data, token);
-        if (replaceDocument.statusCode === 201) {
-          toast.success('¡Éxito al subir el archivo!');
-        } else {
-          toast.error('Error al subir el archivo');
+        if (isFile(data.file)) {
+          console.log(isFile(data.file));
+          const eliminateDoc = await Api.postFile('replace_document', data, token);
+          if (eliminateDoc.statusCode === 200) {
+            try {
+              const replaceDocument = await Api.postFile('subir_archivo', data, token);
+              if (replaceDocument.statusCode === 201) {
+                window.location.reload();
+                toast.success('Archivo reemplazado exitosamente');
+              }
+            } catch (error) {
+              toast.error(JSON.stringify(error));
+            }         
+          }
+        }  
+        if (typeof data.file === 'object') {
+          const eliminar = await Api.postActivitie('replace_document', data, token);
+          if (eliminar.statusCode === 200) {
+            window.location.reload()
+            toast.success('Archivo eliminado exitosamente');
+          }
+          toast.error(['Ha ocurrido un error al eliminar el archivo', JSON.stringify(eliminar.data)]);
         }
-      }
+      setShowPopWindow(false);
     } catch (error) {
       toast.error('Error en la llamada a la API');
+      setShowPopWindow(false);
     }
   };
+
+  const handleContenido = (objeto: any) => {
+    if (objeto) {
+      setContenido(objeto);
+    }
+  }
   
-
-
   const handleFileSelect = (file: any) => {
     if (file) {
       setSelectedFile(file);
     }
   };
 
-  const handleActive = (value: boolean) => {
-    if (!value) {
-      console.log('Mejor nadota')
-      }
-    setShowPopWindow(value);
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setCarpeta(null);
+    setShowPopWindow(false);
   }
-
 
   useEffect(() => {
   fetchService();
+
   }, []);
 
   return (
     <div className='w-screen h-screen fixed p-0 m-0 bg-[#D1D5E8] bg-rect-morado bg-no-repeat bg-fixed bg-contain'>
-      {showPopWindow && selectedFile && (
-          <PopWindow documentName={selectedFile.name}  onAccept={handleAccept}/>
-        )}
+      {showPopWindow && (
+        <PopWindow
+          documentName={selectedFile ? selectedFile.name || selectedFile.nombre : (props.nombre_carpeta || '')}
+          onAccept={selectedFile ? handleAccept : deleteCarpetasAndDocuments}
+          onCancel={handleCancel}
+          icono={selectedFile ? contenido.icono : '/error-solid-240.png'}
+          texto1={selectedFile ? contenido.texto1 : 'La carpeta'}
+          texto2={selectedFile ? contenido.texto2 : 'será eliminada y todos los archivos dentro de esta. ¿Está seguro de que desea eliminarla de todos modos?'}
+          aviso={selectedFile ? contenido.aviso : 'PRECAUCIÓN'}
+        />
+      )}
         <Toaster richColors position='top-center'/>
       <div className='w-full h-full px-6 flex flex-col'>
         <Navbar estilo='border-white text-white'/>
@@ -107,7 +164,7 @@ export const ServiceInfo = () => {
             <MenuManage empresa={servicio.empresa} sucursal={servicio.sucursal} titulo={servicio.titulo} resumen={servicio.resumen}/>
           </div>
           <div className='flex-1 overflow-auto h-full'>
-            <Outlet context={{ onFileSelect: handleFileSelect, onActive: handleActive, showPopWindow }} />
+            <Outlet context={{ onFileSelect: handleFileSelect, onActive: isActive, showPopWindow, onContent: handleContenido, deleteCarpeta: infoCarpeta}} />
           </div>
         </div>
       </div>
