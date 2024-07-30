@@ -1,10 +1,10 @@
 import { MiniManage } from "./MiniManage"
 
 type Props = {
-    empresa: string,
-    sucursal: string,
-    titulo: string,
-    resumen: string,
+    empresa?: string,
+    sucursal?: string,
+    titulo?: string,
+    resumen?: string,
 }
 
 export const MenuManage = ({empresa, sucursal, titulo, resumen}: Props) => {

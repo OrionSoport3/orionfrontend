@@ -62,12 +62,11 @@ export const Actividad = ({ fecha_inicio, fecha_final, estado, empresa, sucursal
                         </div>
                         <DetallesProyecto prop="Resumen del trabajo a realizar" titulo_proyecto={`${resumen}`}/>
                         <DetallesProyecto prop="Medio de transporte" titulo_proyecto={`Moverse en la ${vehiculo}`}/>
-                        {id}
                     </div>
                 </div>
                 <div className="absolute bottom-4 right-8">
                     <button className="flex flex-row h-[28px] w-[28px]">
-                        <Link to={`/servicio/${id}/archivos`}><img src="../edit.png" /></Link>
+                        <Link to={`/servicio/${id}/archivos`}><img src="../edit.png"/></Link>
                     </button>
                 </div>
             </div>

@@ -24,10 +24,10 @@ export const FechaMes = ({objetoFecha, fecha}: Props) => {
   return (
     <div className="pl-4">
         <button onClick={abrirYCerrar} className='flex flex-row justify-center space-x-3 pl-2'>
-          <img src="/flecha_morada.png" className={`h-6 w-5 transform `}/>
+          <img src="/flecha_morada.png" className={`h-6 w-5 transform transition-all duration-150 ${asi ? 'rotate-[93deg]' : ''}`}/>
           <h2 className="font-manjari font-bold text-xl">{dia} de {mes} de {añito} </h2><h2 className="text-white bg-azul-de-mujer w-6 rounded-full">{objetoFecha.length}</h2>
         </button>
-        <div className={`w-full flex flex-col justify-center transform transition-all duration-150 ${asi ? 'opacity-100 max-h-[4000px]' : 'opacity-0 max-h-0 pointer-events-none'}`}>
+        <div className={`w-full flex flex-col justify-center transform transition-all duration-[250ms] ${asi ? 'opacity-100 max-h-[4000px]' : 'opacity-0 max-h-0 pointer-events-none'}`}>
             {objetoFecha.map((item: any) => (
                <div key={item.id_actividad} className="space-y-4 pl-8">
                <Actividad

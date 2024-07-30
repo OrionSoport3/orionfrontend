@@ -58,7 +58,7 @@ export class Api {
 
 
  
-    static async postActivitie<T>(url: string, data: any ,token: string | null): Promise<any> {
+    static async postActivitie(url: string, data: any ,token: string): Promise<any> {
         const response = await fetch(`${Api.baseUrl}${url}`, {
             method: "POST",
             headers: {

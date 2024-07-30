@@ -16,6 +16,7 @@ import { InputDate } from "../utils/InputDate";
 import { CarroSeleccionable } from "../utils/CarroSeleccionable";
 import { CreateBoton } from "../components/Subcomponents/CreateBoton";
 import { useNavigate } from "react-router-dom";
+import { getEmpresasSucursales } from "../store/empresas_sucursales";
 
 export  const NewServiceForm = () => {
   
@@ -68,7 +69,8 @@ export  const NewServiceForm = () => {
     if (field === "empresa") {
       const CompaniSelected = companis.find(empresas => empresas.nombre_empresa === value);
       setSelected(CompaniSelected);
-      const nombresSucursales = CompaniSelected?.sucursales.map((sucursales: any) => sucursales.nombre_sucursal);
+      const nombresSucursales = CompaniSelected.sucursales.map((sucursales: any) => sucursales.nombre);
+      console.log(CompaniSelected);
       setSucursales(nombresSucursales);
       setFieldValue(field, value);
     }
@@ -100,26 +102,10 @@ export  const NewServiceForm = () => {
       return;
     }
     try {
-      const response = await Api.withToken('get', token);
-      const usuarios = response.data.personal.map((user: any) => ({
-          id: user.id,
-          name: user.nombre,
-          departamento: user.departamento,
-          isSelected: usuariosState.find((storedUser: any) => storedUser.id === user.id)?.isSelected || false,
-        }));
-      setUsers(usuarios);      
-       const empresas = response.data.empresas_sucursales.map((empresas: any) => ({
-          id_empresa: empresas.id_empresa,
-          nombre_empresa: empresas.nombre_empresa,
-          sucursales: empresas.sucursales.map((sucursales: any) => ({
-            id_sucursal: sucursales.id_sucursales,
-            nombre_sucursal: sucursales.nombre,
-            direccion_sucursal: sucursales.direccion,
-            enlace_sucursal: sucursales.enlace,
-            telefono_sucursal: sucursales.telefono,
-          })),
-      }));
-      setEmpresas(empresas);
+
+      dispatch(getEmpresasSucursales(token)).unwrap().then((valores) => {setUsers(valores.personal), setEmpresas(valores.empresas_sucursales)}).catch((error) => {console.log(error);
+        
+      })
       try {
         const response = await Api.withToken('fotos', token);
         const fotosCarro = response.data.fotos.map((carros: any) => ({
@@ -139,7 +125,7 @@ export  const NewServiceForm = () => {
     }
   }
     useEffect(() => {
-      fetchAll();
+      fetchAll();      
     }, [token]);
 
   const validationSchema = Yup.object({
@@ -175,6 +161,11 @@ export  const NewServiceForm = () => {
       personal: personal,
       vehiculo: carroChequeado,
     }
+
+    if (!token) {
+      return
+    }
+    
     try {
       const response = await Api.postActivitie('new_activity', mensaje, token);
       if (response.statusCode === 200) {
@@ -205,7 +196,7 @@ export  const NewServiceForm = () => {
             <div key={item.id} className="col-span-1">
               <ItemSeleccionable
                 key={item.id}
-                name={item.name}
+                name={item.nombre}
                 selected={() => selection(item.id)}
                 isSelected={item.isSelected}
               />

@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Checkbox } from "./Checkbox";
+import { Formik } from 'formik';
 
 interface SidebarProps {
   menuAbierto: boolean;
   toggleMenu: () => void;
+  empresas: any[],
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ menuAbierto, toggleMenu }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ menuAbierto, toggleMenu, empresas }) => {
+  const [datos, setDatos] = useState();
+
+  const buscar = () => {
+
+  }
+
+  useEffect(() => {console.log(empresas);
+  }, [])
+
   return (
     <div className={`transform transition-all duration-500 flex flex-col BP1:mt-3 ${menuAbierto ? 'w-[17rem] md:w-[22rem]' : 'w-6 sm:w-9 BP1:w-10 h-3 BP1:h-20 opacity-100 mt-1'}`}>
       <div className="flex justify-between items-center">
@@ -18,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ menuAbierto, toggleMenu }) => 
       </div>
       <div className={`pt-2 md:pt-6 transform transition-all duration-200 ${menuAbierto ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <h3 className="font-josefin text-sm sm:text-base md:text-xl font-bold">Fecha</h3>
-        <form action="">
+        <form onSubmit={buscar}>
           <div className="flex mt-3 justify-start">
             <input type="date" className="bg-white rounded-lg w-full h-9 BP1:h-10 pl-2 outline-none shadow-lg" />
             <button className=" px-2 py-1 bg-gradient-to-r from-blue-button to-black rounded-lg text-white md:text-lg text-base justify-end ml-5 hover:bg-gradient-to-r hover:from-morado-señor hover:to-azul-de-mujer" type="submit">Consultar</button> 
@@ -32,14 +43,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ menuAbierto, toggleMenu }) => 
           </div>
         </form>
         <h3 className="font-josefin text-base md:text-xl font-bold mt-6">Empresas</h3>
-        <form action="">
-          <div className="flex mt-3 justify-start">
-            <Checkbox /> <h3 className='ml-3 truncate'>Pico Energy</h3>
-          </div>
-          <div className="flex mt-3 justify-start">
-            <Checkbox /> <h3 className='ml-3'>WeatherFord</h3>
-          </div>
-        </form>
+        <div className='w-full h-full py-3'>
+          {empresas.map((empresa: any, index: number) => (
+            <div key={index} className=''> 
+              <Checkbox value={empresa.nombre_empresa}/>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

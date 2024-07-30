@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Formik } from 'formik';
 import { Api } from '../../services/Api';
 import { useSelector } from 'react-redux';
@@ -12,63 +12,60 @@ type Props = {
   value: boolean;
 }
 
-export const AddDocumentButton = ({onChange, onConflict, value, onContent}: Props) => {
-    const token = useSelector((state: RootState) => state.auth.token);
-    const props = useParams<{id_carpeta: string; nombre_carpeta: string}>();
+const AddDocumentButtonComponent: React.FC<Props> = ({ onChange, onConflict, value, onContent }) => {
+  const token = useSelector((state: RootState) => state.auth.token);
+  const props = useParams<{id: string; id_carpeta: string; nombre_carpeta: string}>();
 
-    const [fileName, setFileName] = useState<string>('');
+  const [fileName, setFileName] = useState<string>('');
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files && event.target.files.length > 0) {
-        const file = event.target.files[0];
-        if (file.size > 10 * 1024 * 1024) {
-          console.log('El archivo excede el tamaño máximo permitido de 10MB');
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      if (file.size > 10 * 1024 * 1024) {
+        console.log('El archivo excede el tamaño máximo permitido de 10MB');
       } else {
         setFileName(event.target.files[0].name);
       }
-      } else {
-        setFileName('Ningún archivo seleccionado');
-      }
-    }; 
-
-    const initialValues = {
-        file: null,
+    } else {
+      setFileName('Ningún archivo seleccionado');
     }
+  };
 
+  const initialValues = {
+    file: null,
+  };
 
-    const onSubmit = async (values: typeof initialValues) => {
-        const amigos = {
-            ...values,
-            id_carpeta: props.id_carpeta,
-            nombre_carpeta: props.nombre_carpeta,
-        }
-        if (!values.file || !token) {
-          console.log('File or token is missing');
-          return;
-      }
-        try {
-            const response = await Api.postFile('subir_archivo', amigos, token);
-            switch (response.statusCode) {
-              case 201:
-                setFileName('');
-                window.location.reload();
-                break; 
-              case 409:
-                onChange(!value);
-                onContent({icono: '/error-regular-240.png', texto1: 'El archivo', texto2: 'ya se encuentra actualmente en la carpeta. ¿Desea reemplazarlo?', aviso: 'Advertencia'});
-                onConflict(amigos.file);
-                setFileName('');
-                break;
-              default:
-                console.log(response.data);
-                break;
-            }
-        } catch (error) {
-            console.log('error', error);
-        }
+  const onSubmit = async (values: typeof initialValues) => {
+    const amigos = {
+      ...values,
+      id_carpeta: props.id_carpeta,
+      nombre_carpeta: props.nombre_carpeta,
+    };
+    if (!values.file || !token) {
+      console.log('File or token is missing');
+      return;
     }
-
-
+    try {
+      const response = await Api.postFile('subir_archivo', amigos, token);
+      switch (response.statusCode) {
+        case 201:
+          setFileName('');
+          window.location.reload();
+          break;
+        case 409:
+          onChange(!value);
+          onContent({ icono: '/error-regular-240.png', texto1: 'El archivo', texto2: 'ya se encuentra actualmente en la carpeta. ¿Desea reemplazarlo?', aviso: 'Advertencia' });
+          onConflict(amigos.file);
+          setFileName('');
+          break;
+        default:
+          console.log(response.data);
+          break;
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   return (
     <div className='w-fit h-fit flex flex-col justify-center absolute bottom-8 right-12 z-40'>
@@ -120,3 +117,4 @@ export const AddDocumentButton = ({onChange, onConflict, value, onContent}: Prop
   );
 };
 
+export const AddDocumentButton = memo(AddDocumentButtonComponent);

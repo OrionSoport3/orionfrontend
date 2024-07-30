@@ -7,6 +7,9 @@ import { thunk, ThunkDispatch } from "redux-thunk";
 import { useDispatch } from "react-redux";
 import empresasReducer from './empresas';
 import carroReducer from './carro'
+import ActivityReducerOnly from './documents'
+import AllActivitidades from './actividades';
+import EmpresasPersonasSucursales from './empresas_sucursales';
 
 const persistConfig = {
   key: 'root',
@@ -19,6 +22,9 @@ const rootReducer = combineReducers({
   select: selectedReducer,
   empresas: empresasReducer,
   carro: carroReducer,
+  infoDocs: ActivityReducerOnly,
+  actividades: AllActivitidades,
+  empresasGente: EmpresasPersonasSucursales,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
