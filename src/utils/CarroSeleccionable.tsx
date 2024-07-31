@@ -4,7 +4,6 @@ type Props = {
     chequeado: boolean,
     value: string,
     toggleChecked: () => void,
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const CarroSeleccionable = ({modelo, imgUrl, value, toggleChecked, chequeado} : Props) => {

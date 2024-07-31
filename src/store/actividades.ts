@@ -29,18 +29,23 @@ interface ActividadEnPlural {
     isCompleted: boolean,
 }
 
+interface FetchDataParams {
+    token: string;
+    data?: any; 
+  }
+
 const initialState: ActividadEnPlural  = {
     actividades: [],
     isLoading: false,
     isCompleted: false,
 }
 
-export const getAllActivities = createAsyncThunk('fetch/getAllActivities', async (token: string, {rejectWithValue}) => {
+export const getAllActivities = createAsyncThunk('fetch/getAllActivities', async ({token, data}: FetchDataParams, {rejectWithValue}) => {
     if (!token) {
         return rejectWithValue({ message: 'Token is missing' })
     }
     try {
-        const response = await Api.withToken('get_activities', token);
+        const response = await Api.postActivitie('get_activities',data ,token);
         if (response.statusCode === 200) {
             return response.data.actividad
         } else {

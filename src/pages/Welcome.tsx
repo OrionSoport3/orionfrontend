@@ -8,12 +8,12 @@ import { useSelector } from 'react-redux';
 import { ObjetoMes } from '../components/ObjetoMes';
 import { getAllActivities } from '../store/actividades';
 import { toast, Toaster } from 'sonner';
-import empresas from '../store/empresas';
 import { getEmpresasSucursales } from '../store/empresas_sucursales';
 
 const Welcome: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(true);
   const [activity, setActivity] = useState<any[]>([]);
+  const [parametrosBusqueda, setParametrosBusqueda] = useState<any[]>([]);
   const [empresas, setEmpresas] = useState<any[]>([]);
 
   const token = useSelector((state: RootState) => state.auth.token);
@@ -22,6 +22,7 @@ const Welcome: React.FC = () => {
   const toggleMenu = () => {
     setMenuAbierto(!menuAbierto);
   };
+
 
   useEffect(() => {
     const ajustarMenuSegunPantalla = () => {
@@ -35,13 +36,14 @@ const Welcome: React.FC = () => {
     ajustarMenuSegunPantalla(); 
   }, []);
 
-
   const fetchActivities = async () => {
     if (!token) {
       console.error('Token is null or undefined');
       return;
     }
-      despacho(getAllActivities(token)).unwrap().then((valores) => {setActivity(valores)}).catch((error) => toast.error(JSON.stringify(error)));
+    if (parametrosBusqueda) {
+      despacho(getAllActivities({data: parametrosBusqueda, token: token })).unwrap().then((valores) => {setActivity(valores)}).catch((error) => toast.error(JSON.stringify(error)));
+    }    
       despacho(getEmpresasSucursales(token)).unwrap().then(((values: any) => {setEmpresas(values.empresas_sucursales)}));
 
   }
@@ -91,23 +93,27 @@ const Welcome: React.FC = () => {
   });
 
   return (
-    <div className="fixed w-screen h-screen px-4 BP1:px-6 bg-design-one bg-no-repeat bg-contain bg-fixed text-black bg-colores-pantalla">
-      <div className='flex justify-center'>
-        <Navbar/>
-      </div>
-      <Toaster richColors position='bottom-right'/>
-      <div className={`flex h-[96%] BP1:pt-5 pt-1 ${menuAbierto ? '' : 'pl-0'}`}>
-        <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} empresas={empresas}/>
-        <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 ${menuAbierto ? ' w-[0] md:w-11/12 opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
-          <Subnavbar />
-          <div className='w-auto h-full pb-32 py-5 overflow-y-auto overflow-x-hidden pl-2'>
-            {activity.length > 0 
-              ? (objetosFecha)
-            : ''
-            }
+    <div className="fixed w-screen h-screen bg-design-one bg-no-repeat bg-contain bg-fixed text-black bg-colores-pantalla">
+      <div className='w-full h-full px-4 BP1:px-6 pb-2 overflow-hidden'>
+        <div className='flex justify-center'>
+          <Navbar/>
+        </div>
+        <Toaster richColors position='bottom-right'/>
+        <div className={`flex h-[calc(100%-80px)] w-full overflow-hidden BP1:pt-5 pt-1 ${menuAbierto ? '' : 'pl-0'}`}>
+          <div className='w-fit h-full relative '>
+          <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} empresas={empresas} busqueda={(values) => {setParametrosBusqueda(values)}}/>
           </div>
-          <div className='absolute bottom-28 right-0 BP1:bottom-20 BP1:right-8'>
-            <SrBoton ruta='/new_service' contenido='NUEVO SERVICIO'/>
+          <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 ${menuAbierto ? ' w-[0] md:w-11/12 opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
+            <Subnavbar />
+            <div className='w-full h-full py-5 overflow-y-auto overflow-x-hidden pl-2'>
+              {activity.length > 0 
+                ? (objetosFecha)
+              : ''
+              }
+            </div>
+            <div className='absolute bottom-6 right-0 BP1:bottom-6 BP1:right-8'>
+             <SrBoton ruta='/new_service' contenido='NUEVO SERVICIO'/>
+            </div>
           </div>
         </div>
       </div>
