@@ -6,9 +6,10 @@ import { SrBoton } from '../components/Subcomponents/SrBoton';
 import { RootState, useAppDispatch } from '../store/store';
 import { useSelector } from 'react-redux';
 import { ObjetoMes } from '../components/ObjetoMes';
-import { getAllActivities } from '../store/actividades';
 import { toast, Toaster } from 'sonner';
+import pusher from '../services/pusher';
 import { getEmpresasSucursales } from '../store/empresas_sucursales';
+import { getAllActivities } from '../store/actividades';
 
 const Welcome: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(true);
@@ -16,7 +17,13 @@ const Welcome: React.FC = () => {
   const [parametrosBusqueda, setParametrosBusqueda] = useState<any[]>([]);
   const [empresas, setEmpresas] = useState<any[]>([]);
 
+
   const token = useSelector((state: RootState) => state.auth.token);
+  // const io = new Server({
+  //   cors: {
+  //     origin: socketURL
+  //   }
+  // })
   const despacho = useAppDispatch();
 
   const toggleMenu = () => {
@@ -36,22 +43,60 @@ const Welcome: React.FC = () => {
     ajustarMenuSegunPantalla(); 
   }, []);
 
+  useEffect(() => {
+    
+    pusher.connection.bind('connected', () => {
+      console.log('Pusher connected');
+
+
+  });
+  
+  const channel = pusher.subscribe('activities-channel');
+
+  channel.bind('ActivitiesFetched', (data: any) => {
+      console.log('ActivitiesFetched event received:', data);
+  });
+  
+fetchActivities();
+
+  
+    // Limpiar la suscripción cuando el componente se desmonte
+    return () => {
+      pusher.unsubscribe('activities-channel');
+    };
+  }, []);
+
   const fetchActivities = async () => {
     if (!token) {
       console.error('Token is null or undefined');
       return;
     }
     if (parametrosBusqueda) {
-      despacho(getAllActivities({data: parametrosBusqueda, token: token })).unwrap().then((valores) => {setActivity(valores)}).catch((error) => toast.error(JSON.stringify(error)));
+      console.log(parametrosBusqueda);
+      const objeto = {token: token, data: parametrosBusqueda}
+      despacho(getAllActivities(objeto)).unwrap().then((valores: any) => {setActivity(valores)}).catch((error) => toast.error(JSON.stringify(error)));
+      
     }    
       despacho(getEmpresasSucursales(token)).unwrap().then(((values: any) => {setEmpresas(values.empresas_sucursales)}));
 
   }
 
 
-  useEffect(() => {
-    fetchActivities();
-  }, [token]);
+  // useEffect(() => {
+
+  //   // Configurar eventos del socket
+  //   socket.on('new_activity', (data) => {
+  //     console.log('Nueva actividad recibida:', data);
+  //     // Actualiza el estado o maneja la nueva actividad como sea necesario
+  //     fetchActivities(); // Re-fetch activities if needed
+  //   });
+
+  //   // Desconectar el socket cuando el componente se desmonta
+  //   return () => {
+  //     socket.disconnect();
+  //     socket.off('new_activity');
+  //   };
+  // }, [token]); 
 
   const objetosFecha: JSX.Element[] = [];
   

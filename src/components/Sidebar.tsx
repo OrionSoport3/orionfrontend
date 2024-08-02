@@ -57,7 +57,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ menuAbierto, toggleMenu, empre
       >
         {({
           values,
-          errors,
           handleChange,
           handleSubmit,
           setFieldValue

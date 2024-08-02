@@ -30,7 +30,7 @@ interface ActividadEnPlural {
 }
 
 interface FetchDataParams {
-    token: string;
+    token?: string;
     data?: any; 
   }
 
