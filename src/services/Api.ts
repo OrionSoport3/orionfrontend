@@ -75,5 +75,5 @@ export class Api {
             data: dataResponse
         }
     }
- 
+
 }

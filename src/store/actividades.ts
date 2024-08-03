@@ -48,9 +48,12 @@ export const getAllActivities = createAsyncThunk('fetch/getAllActivities', async
         const response = await Api.postActivitie('get_activities',data ,token);
         if (response.statusCode === 200) {
             return response.data.actividad
+        } if (response.statusCode === 404) {
+            toast.info(response.data.message);
+            return rejectWithValue({message: response.data.message})
         } else {
             toast.error('Hubo un problema al realizar la solicitud al servidor');
-          return rejectWithValue({ message: response.data.error });
+          return rejectWithValue({ message: response.data.message });
         }
 
         

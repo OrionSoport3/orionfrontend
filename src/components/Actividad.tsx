@@ -15,7 +15,6 @@ type Props = {
     id: string | number,
 }
 
-
 export const Actividad = ({ fecha_inicio, fecha_final, estado, empresa, sucursal, titulo_proyecto, personal, resumen, vehiculo, id }: Props, ) => {
 
     const [abierto, setAbierto] = useState<boolean>(false);
@@ -36,7 +35,7 @@ export const Actividad = ({ fecha_inicio, fecha_final, estado, empresa, sucursal
             {estado === 'CANCELADO' && (
                 <div className="w-2/12 flex flex-col justify-center text-2xl font-NATS text-red-600">{estado}</div>
             )}
-            <div className="flex flex-col w-full rounded-2xl overflow-hidden h-auto shadow-xl items-center relative">
+            <div className={`flex flex-col w-full rounded-2xl overflow-hidden ${abierto ? ' h-auto shadow-xl items-center relative' : 'h-fit'}`}>
                 <button onClick={abrir} type="button"  className="bg-gradient-to-r from-[#727FBF] to-[#050A25] h-auto flex w-full flex-row items-center px-8 py-3 justify-between">
                     <div className="flex flex-row justify-center items-center space-x-3">
                         <h2 className="font-marcellus text-xl text-white">{empresa}</h2><h1 className="text-white">-</h1><h2 className="font-marcellus text-xl text-white">{sucursal}</h2>
@@ -53,18 +52,18 @@ export const Actividad = ({ fecha_inicio, fecha_final, estado, empresa, sucursal
                                 <h1 className="font-manjari font-bold">Encargados de sitio</h1>
                             </div>
                             <div className="w-full">
-                            {personal.map((items, index) => (
-                                <div key={index} className="">
-                                    {items.nombre}
-                                </div>
-                            ))}
+                                {personal.map((items, index) => (
+                                    <div key={index} className="">
+                                        {items.nombre}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                         <DetallesProyecto prop="Resumen del trabajo a realizar" titulo_proyecto={`${resumen}`}/>
                         <DetallesProyecto prop="Medio de transporte" titulo_proyecto={`Moverse en la ${vehiculo}`}/>
                     </div>
                 </div>
-                <div className="absolute bottom-4 right-8">
+                <div className={`${abierto ? 'absolute bottom-4 right-8' : 'hidden'}`}>
                     <button className="flex flex-row h-[28px] w-[28px]">
                         <Link to={`/servicio/${id}/archivos`}><img src="../edit.png"/></Link>
                     </button>

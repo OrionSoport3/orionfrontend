@@ -14,7 +14,7 @@ import EmpresasPersonasSucursales from './empresas_sucursales';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['select', 'auth', 'empresas', 'carro']
+  whitelist: ['select', 'auth', 'empresas', 'carro', 'actividades']
 };
 
 const rootReducer = combineReducers({
