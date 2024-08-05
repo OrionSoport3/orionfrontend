@@ -1,7 +1,7 @@
 export class Api {
-    static baseUrl = "http://192.168.10.33:8000/api/";
+    static baseUrl = "http://192.168.10.44:8000/api/";
 
-    static async post<T>(url: string, data: any): Promise<any> {
+    static async post(url: string, data: any): Promise<any> {
         const response = await fetch(`${Api.baseUrl}${url}`, {
             method: "POST",
             headers: {

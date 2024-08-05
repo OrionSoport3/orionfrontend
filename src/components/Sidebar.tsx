@@ -63,8 +63,13 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menuAbierto, toggleMenu, emp
   }
 
   useEffect(() => {
-    
-  }, [])
+    if (contenedorPrincipalRef.current) {
+      const alturaTotal = contenedorPrincipalRef.current.offsetHeight;
+      const valorDividido = alturaTotal / 8;
+      const valorRedondeado = Math.round(valorDividido);
+      setNumeroDeItems(valorRedondeado);
+    }
+  }, []);
 
   return (
   <div className={`w-full h-full transform transition-all duration-500 ${menuAbierto ? 'w-[18rem] md:w-[20rem]' : 'w-6 sm:w-9 BP1:w-10 h-fit  opacity-100'}`}>

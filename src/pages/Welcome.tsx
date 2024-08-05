@@ -17,6 +17,7 @@ const Welcome: React.FC = () => {
   const [activity, setActivity] = useState<any[]>([]);
   const [parametrosBusqueda, setParametrosBusqueda] = useState<any[]>([]);
   const [empresas, setEmpresas] = useState<any[]>([]);
+  const [estado, setEstado] = useState<any[]>([]);
   const [renderedObjects, setRenderedObjects] = useState<JSX.Element[]>([]);
   const contenedorPrincipalRef = useRef<HTMLDivElement>(null);
   const [numeroDeItems, setNumeroDeItems] = useState<number>(0);
@@ -38,9 +39,10 @@ const Welcome: React.FC = () => {
 
   const pusher = new Pusher('07f871ddb43ea7c54a41', {
     cluster: 'us2',
-    authEndpoint: 'http://192.168.10.33:8000/api/userId',
+    authEndpoint: 'http://192.168.10.44:8000/api/userId',
     auth: {
       headers: {
+        'Referer': 'http://192.168.10.44:3000',
         'Authorization': `Bearer ${token}`
       }
     }
@@ -88,7 +90,7 @@ const Welcome: React.FC = () => {
   useEffect(() => {
     fetchActivities();
   }, [token, parametrosBusqueda]);
-
+  
 
   const fetchActivities = async () => {
     if (!token) {
@@ -98,7 +100,13 @@ const Welcome: React.FC = () => {
 
     try {
       if (parametrosBusqueda) {
-        const objeto = { token, data: parametrosBusqueda };
+        const nuevosParametros = {
+          ...parametrosBusqueda,
+          estado: estado
+        }
+        const objeto = { token, data: nuevosParametros };   
+        console.log(objeto);
+             
         const valores = await despacho(getAllActivities(objeto)).unwrap();
         setActivity(valores);
         
@@ -116,7 +124,6 @@ const Welcome: React.FC = () => {
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
-  
 
 const renderObject = (actividad: any) => {
   const objetosFecha: JSX.Element[] = [];
@@ -182,7 +189,6 @@ const renderObject = (actividad: any) => {
   return objetosFecha;
 };
 
-
   useEffect(() => {
     if (activity.length > 0) {
       const rendered = renderObject(activity);
@@ -200,10 +206,15 @@ const renderObject = (actividad: any) => {
         <Toaster richColors position='bottom-right' />
         <div className={`flex h-[calc(100%-75px)] w-full overflow-hidden BP1:pt-5 pt-1 ${menuAbierto ? '' : 'pl-0'}`}>
           <div className='w-fit h-full'>
-            <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} empresas={empresas} busqueda={(values) => setParametrosBusqueda(values)} />
+            <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} empresas={empresas} busqueda={(valores) => {try {
+              setParametrosBusqueda([valores, estado]);
+            } catch (error) {
+              console.log(error);
+              
+            }}}/>
           </div>
           <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 ${menuAbierto ? 'w-[0] md:w-11/12 opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
-            <Subnavbar />
+            <Subnavbar seleccionar={(values) => {setEstado(values)}}/>
             <div ref={contenedorPrincipalRef} className='w-full h-[calc(100%-70px)] overflow-hidden'>
               <div className='h-full w-full  py-5 pl-2 overflow-y-auto'>
                 <div className='w-full h-full'>

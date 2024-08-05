@@ -39,7 +39,7 @@ export const loginUser = createAsyncThunk('/auth/loginUsers', async (data: any, 
                 throw new Error("Error");
         }
     } catch (error) {
-        console.error('Error occurred during login:', error);
+        console.error( error);
         toast.error('Hubo un error al iniciar sesion: ' + error);
         throw error;
     }
