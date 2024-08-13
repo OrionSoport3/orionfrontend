@@ -17,8 +17,9 @@ const Welcome: React.FC = () => {
   const [activity, setActivity] = useState<any[]>([]);
   const [parametrosBusqueda, setParametrosBusqueda] = useState<any[]>([]);
   const [empresas, setEmpresas] = useState<any[]>([]);
-  const [estado, setEstado] = useState<any[]>([]);
+  const [estadito, setEstado] = useState<{estado: string[]}>({estado: ["TODOS"]});
   const [renderedObjects, setRenderedObjects] = useState<JSX.Element[]>([]);
+  const [divErrores, setErrores] = useState<JSX.Element[]>([]);
   const contenedorPrincipalRef = useRef<HTMLDivElement>(null);
   const [numeroDeItems, setNumeroDeItems] = useState<number>(0);
 
@@ -39,10 +40,10 @@ const Welcome: React.FC = () => {
 
   const pusher = new Pusher('07f871ddb43ea7c54a41', {
     cluster: 'us2',
-    authEndpoint: 'http://192.168.10.44:8000/api/userId',
+    authEndpoint: 'http://192.168.10.200:8000/api/userId',
     auth: {
       headers: {
-        'Referer': 'http://192.168.10.44:3000',
+        'Referer': 'http://192.168.10.200:3000',
         'Authorization': `Bearer ${token}`
       }
     }
@@ -50,9 +51,55 @@ const Welcome: React.FC = () => {
 
   const despacho = useAppDispatch();
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) {
+        return divErrores.push(
+          <div>Ups</div>
+        );
+      }
+        try {
+            const values = await despacho(getEmpresasSucursales(token)).unwrap();
+            setEmpresas(values.empresas_sucursales);
+        } catch (error) {
+            console.error("Failed to fetch empresas:", error);
+        }
+    };
+
+    fetchData();
+}, [despacho, token]);
+
   const toggleMenu = () => {
     setMenuAbierto(!menuAbierto);
   };
+
+  const handleSelect = (valor: string) => {
+    setEstado((prevSeleccionado) => {
+        // Si el valor seleccionado no es "TODOS"
+        if (valor !== "TODOS") {
+            // Si "TODOS" está en la lista de seleccionados, reemplázalo con el nuevo valor
+            if (prevSeleccionado.estado.includes("TODOS")) {
+                return { estado: [valor] };
+            }
+            
+            // Si el valor ya está en la lista, elimínalo
+            if (prevSeleccionado.estado.includes(valor)) {
+                const newSelection = prevSeleccionado.estado.filter(item => item !== valor);
+                // Si después de eliminar todos los valores, el array queda vacío, regresa a ["TODOS"]
+                return newSelection.length === 0 ? { estado: ["TODOS"] } : { estado: newSelection };
+            }
+
+            // Si el valor no está en la lista, agrégalo
+            return { estado: [...prevSeleccionado.estado, valor] };
+        }
+        
+        // Si el valor es "TODOS", resetea la lista a ["TODOS"]
+        return { estado: ["TODOS"] };
+    });
+  };
+
+
+
 
   useEffect(() => {
     const ajustarMenuSegunPantalla = () => {
@@ -61,6 +108,7 @@ const Welcome: React.FC = () => {
       } else {
         setMenuAbierto(false);
       }
+      
     };
 
     ajustarMenuSegunPantalla(); 
@@ -89,8 +137,9 @@ const Welcome: React.FC = () => {
 
   useEffect(() => {
     fetchActivities();
-  }, [token, parametrosBusqueda]);
+  }, [token,estadito, parametrosBusqueda]);
   
+
 
   const fetchActivities = async () => {
     if (!token) {
@@ -99,22 +148,10 @@ const Welcome: React.FC = () => {
     }
 
     try {
-      if (parametrosBusqueda) {
-        const nuevosParametros = {
-          ...parametrosBusqueda,
-          estado: estado
-        }
-        const objeto = { token, data: nuevosParametros };   
-        console.log(objeto);
-             
-        const valores = await despacho(getAllActivities(objeto)).unwrap();
-        setActivity(valores);
-        
-      }
-      await despacho(getAllActivities({token: token, data: null})).unwrap()
-      // .then((valores) => {setActivity(valores)})
-      const values = await despacho(getEmpresasSucursales(token)).unwrap();
-      setEmpresas(values.empresas_sucursales);
+      const objeto = { token, data: {...estadito, ...parametrosBusqueda} };   
+      const valores = await despacho(getAllActivities(objeto)).unwrap();
+      setActivity(valores);
+
     } catch (error) {
       console.error(error);
     }
@@ -125,74 +162,80 @@ const Welcome: React.FC = () => {
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
-const renderObject = (actividad: any) => {
-  const objetosFecha: JSX.Element[] = [];
+  const renderObject = (actividad: any) => {
+    const objetosFecha: JSX.Element[] = [];
 
-  if (Array.isArray(actividad) && actividad.length > 0) {
-    const groupFechasItem = activity.reduce((acc: { [key: string]: { [key: string]: any[] } }, item) => {
-      const [granAño, granMes] = item.fecha_final.split('-');
-      const mesAño = `${granMes} ${granAño}`;
 
-      if (!acc[mesAño]) {
-        acc[mesAño] = {};
-      }
+    if (Array.isArray(actividad) && actividad.length > 0) {
+      const groupFechasItem = activity.reduce((acc: { [key: string]: { [key: string]: any[] } }, item) => {
+        const [granAño, granMes] = item.fecha_final.split('-');
+        const mesAño = `${granMes} ${granAño}`;
 
-      if (!acc[mesAño][item.fecha_final]) {
-        acc[mesAño][item.fecha_final] = [];
-      }
+        if (!acc[mesAño]) {
+          acc[mesAño] = {};
+        }
 
-      acc[mesAño][item.fecha_final].push(item);
+        if (!acc[mesAño][item.fecha_final]) {
+          acc[mesAño][item.fecha_final] = [];
+        }
 
-      return acc;
-    }, {});
+        acc[mesAño][item.fecha_final].push(item);
 
-    Object.keys(groupFechasItem).forEach((mes_año) => {
-      const [mesNumero, año] = mes_año.split(' ');
-      const mes = monthNames[parseInt(mesNumero, 10) - 1];
-      const items = groupFechasItem[mes_año];
+        return acc;
+      }, {});
+
+      Object.keys(groupFechasItem).forEach((mes_año) => {
+        const [mesNumero, año] = mes_año.split(' ');
+        const mes = monthNames[parseInt(mesNumero, 10) - 1];
+        const items = groupFechasItem[mes_año];
+
+        objetosFecha.push(
+          <div key={mes_año} className='space-y-2'>
+            <ObjetoMes mes={mes} año={año} items={items} />
+          </div>
+        );
+      });
+    } else if (typeof actividad === 'object') {
+      const [granAño, granMes] = actividad.fecha_final.split('-');
+      const mes = monthNames[parseInt(granMes, 10) - 1];
 
       objetosFecha.push(
-        <div key={mes_año} className='space-y-2'>
-          <ObjetoMes mes={mes} año={año} items={items} />
+        <div key={actividad.id_actividad} className='space-y-2'>
+          <h2>{`${mes} ${granAño}`}</h2>
+          <div>
+            <h3>{actividad.titulo}</h3>
+            <p>{actividad.resumen}</p>
+            <p>Fecha Inicio: {actividad.fecha_inicio}</p>
+            <p>Fecha Final: {actividad.fecha_final}</p>
+            <p>Vendedor: {actividad.vendedor}</p>
+            <p>Inconvenientes: {actividad.inconvenientes}</p>
+            <p>Vehículo: {actividad.vehiculo}</p>
+            <p>Estado: {actividad.estado}</p>
+            <h4>Personal:</h4>
+            <ul>
+              {actividad.personal.map((persona: any, index: number) => (
+                <li key={index}>
+                  {persona}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       );
-    });
-  } else if (typeof actividad === 'object') {
-    const [granAño, granMes] = actividad.fecha_final.split('-');
-    const mes = monthNames[parseInt(granMes, 10) - 1];
+    }
 
-    objetosFecha.push(
-      <div key={actividad.id_actividad} className='space-y-2'>
-        <h2>{`${mes} ${granAño}`}</h2>
-        <div>
-          <h3>{actividad.titulo}</h3>
-          <p>{actividad.resumen}</p>
-          <p>Fecha Inicio: {actividad.fecha_inicio}</p>
-          <p>Fecha Final: {actividad.fecha_final}</p>
-          <p>Vendedor: {actividad.vendedor}</p>
-          <p>Inconvenientes: {actividad.inconvenientes}</p>
-          <p>Vehículo: {actividad.vehiculo}</p>
-          <p>Estado: {actividad.estado}</p>
-          <h4>Personal:</h4>
-          <ul>
-            {actividad.personal.map((persona: any, index: number) => (
-              <li key={index}>
-                {persona}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    );
-  }
+    return objetosFecha;
+  };
 
-  return objetosFecha;
-};
-
-  useEffect(() => {
+  useEffect(() => {    
+    
     if (activity.length > 0) {
       const rendered = renderObject(activity);
       setRenderedObjects(rendered);
+    } else {
+      setRenderedObjects([
+        <div>No se han encontrado actividades con la busqueda</div>
+      ]);
     }
 
   }, [activity]);
@@ -204,24 +247,19 @@ const renderObject = (actividad: any) => {
           <Navbar />
         </div>
         <Toaster richColors position='bottom-right' />
-        <div className={`flex h-[calc(100%-75px)] w-full overflow-hidden BP1:pt-5 pt-1 ${menuAbierto ? '' : 'pl-0'}`}>
+        <div className={`flex h-[calc(100%-75px)] w-full overflow-hidden BP1:pt-5 pt-1 ${menuAbierto ? 'w-[0px]' : 'pl-0'}`}>
           <div className='w-fit h-full'>
-            <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} empresas={empresas} busqueda={(valores) => {try {
-              setParametrosBusqueda([valores, estado]);
-            } catch (error) {
-              console.log(error);
-              
-            }}}/>
+            <Sidebar menuAbierto={menuAbierto} toggleMenu={toggleMenu} empresas={empresas} busqueda={(valores) => {setParametrosBusqueda(valores)}}/>
           </div>
-          <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 ${menuAbierto ? 'w-[0] md:w-11/12 opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
-            <Subnavbar seleccionar={(values) => {setEstado(values)}}/>
+          <div className={`transform transition-all md:duration-500 sm:pt-2 BP1:pl-12 ${menuAbierto ? 'w-[0] md:w-full opacity-0 md:opacity-100 duration-300' : 'w-full'}`}>
+            <Subnavbar seleccionar={(estado) => {handleSelect(estado)}} lista={estadito}/>
             <div ref={contenedorPrincipalRef} className='w-full h-[calc(100%-70px)] overflow-hidden'>
               <div className='h-full w-full  py-5 pl-2 overflow-y-auto'>
                 <div className='w-full h-full'>
                   {isCompletedActividades 
                   ?
                   <div className='w-full h-fit'>
-                    {renderedObjects}
+                    {renderedObjects ? renderedObjects : 'no se ha encontrado ninguna actividad'}
                   </div>
                   : (isLoadingActivities ? 
                     <div className='w-full h-full space-y-4'>
@@ -239,6 +277,8 @@ const renderObject = (actividad: any) => {
               </div>
             </div>
             <div className='absolute bottom-6 right-0 BP1:bottom-6 BP1:right-8'>
+              <button onClick={() => {console.log(estadito);
+              }} className='w-32 h-10'>checar estadito</button>
               <SrBoton ruta='/new_service' contenido='NUEVO SERVICIO'/>
             </div>
           </div>
